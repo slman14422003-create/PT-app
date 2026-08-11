@@ -1,0 +1,92 @@
+{
+  "name": "AST-2012A Clinical Master Pro",
+  "short_name": "AST-2012A",
+  "description": "قاعدة البيانات السريرية المتقدمة لجهاز AST-2012A - 100 بروتوكول علاجي",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f19",
+  "theme_color": "#38bdf8",
+  "categories": ["medical", "health", "fitness", "rehabilitation"],
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b0f19'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M256 76 L256 436 M436 256 L76 256' stroke='%2338bdf8' stroke-width='24' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2338bdf8'/%3E%3Cpath d='M180 180 L332 332 M332 180 L180 332' stroke='%230b0f19' stroke-width='20' stroke-linecap='round'/%3E%3Ctext x='256' y='490' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8' font-weight='bold'%3EAST%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b0f19'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M256 76 L256 436 M436 256 L76 256' stroke='%2338bdf8' stroke-width='24' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2338bdf8'/%3E%3Cpath d='M180 180 L332 332 M332 180 L180 332' stroke='%230b0f19' stroke-width='20' stroke-linecap='round'/%3E%3Ctext x='256' y='490' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8' font-weight='bold'%3EAST%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b0f19'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M256 76 L256 436 M436 256 L76 256' stroke='%2338bdf8' stroke-width='24' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2338bdf8'/%3E%3Cpath d='M180 180 L332 332 M332 180 L180 332' stroke='%230b0f19' stroke-width='20' stroke-linecap='round'/%3E%3Ctext x='256' y='490' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8' font-weight='bold'%3EAST%3C/text%3E%3C/svg%3E",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b0f19'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M256 76 L256 436 M436 256 L76 256' stroke='%2338bdf8' stroke-width='24' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2338bdf8'/%3E%3Cpath d='M180 180 L332 332 M332 180 L180 332' stroke='%230b0f19' stroke-width='20' stroke-linecap='round'/%3E%3Ctext x='256' y='490' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8' font-weight='bold'%3EAST%3C/text%3E%3C/svg%3E",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b0f19'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M256 76 L256 436 M436 256 L76 256' stroke='%2338bdf8' stroke-width='24' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2338bdf8'/%3E%3Cpath d='M180 180 L332 332 M332 180 L180 332' stroke='%230b0f19' stroke-width='20' stroke-linecap='round'/%3E%3Ctext x='256' y='490' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8' font-weight='bold'%3EAST%3C/text%3E%3C/svg%3E",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 1920'%3E%3Crect width='1080' height='1920' fill='%230b0f19'/%3E%3Ctext x='540' y='200' text-anchor='middle' font-family='Arial' font-size='60' fill='%2338bdf8' font-weight='bold'%3EAST-2012A%3C/text%3E%3Ctext x='540' y='300' text-anchor='middle' font-family='Arial' font-size='36' fill='%2394a3b8'%3Eالموسوعة السريرية%3C/text%3E%3Crect x='140' y='400' width='800' height='600' rx='30' fill='%231e293b' stroke='%2338bdf8' stroke-width='4'/%3E%3Ctext x='540' y='500' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8'%3E🔍%3C/text%3E%3Ctext x='540' y='600' text-anchor='middle' font-family='Arial' font-size='32' fill='%23f8fafc'%3E100 بروتوكول علاجي%3C/text%3E%3Ctext x='540' y='680' text-anchor='middle' font-family='Arial' font-size='28' fill='%2394a3b8'%3Eالبحث الذكي المتقدم%3C/text%3E%3Ctext x='540' y='760' text-anchor='middle' font-family='Arial' font-size='28' fill='%2394a3b8'%3E25 نمط علاجي%3C/text%3E%3Ctext x='540' y='840' text-anchor='middle' font-family='Arial' font-size='28' fill='%2394a3b8'%3Eدليل فني كامل%3C/text%3E%3Ctext x='540' y='1100' text-anchor='middle' font-family='Arial' font-size='32' fill='%2310b981'%3E✅ جاهز للتشغيل%3C/text%3E%3Ctext x='540' y='1200' text-anchor='middle' font-family='Arial' font-size='24' fill='%2394a3b8'%3Eالإصدار 2.0 - PRO MASTER%3C/text%3E%3C/svg%3E",
+      "sizes": "1080x1920",
+      "type": "image/svg+xml",
+      "platform": "wide",
+      "label": "الواجهة الرئيسية"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "البحث السريع",
+      "short_name": "بحث",
+      "description": "ابحث عن بروتوكول علاجي",
+      "url": "/?search=true",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%2338bdf8'/%3E%3Ctext x='96' y='120' text-anchor='middle' font-family='Arial' font-size='80' fill='%230b0f19'%3E🔍%3C/text%3E%3C/svg%3E",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الأنماط العلاجية",
+      "short_name": "أنماط",
+      "description": "عرض الأنماط الـ 25",
+      "url": "/?modes=true",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%2310b981'/%3E%3Ctext x='96' y='120' text-anchor='middle' font-family='Arial' font-size='80' fill='%230b0f19'%3E📚%3C/text%3E%3C/svg%3E",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "display_override": ["standalone", "fullscreen"],
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "edge_side_panel": {
+    "preferred_width": 420
+  },
+  "handle_links": "preferred",
+  "scope": "/",
+  "id": "ast-2012a-clinical-master"
+}
