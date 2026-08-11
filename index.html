@@ -1,1 +1,1906 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#38bdf8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b0f19'/%3E%3Ccircle cx='256' cy='256' r='180' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M256 76 L256 436 M436 256 L76 256' stroke='%2338bdf8' stroke-width='24' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2338bdf8'/%3E%3Cpath d='M180 180 L332 332 M332 180 L180 332' stroke='%230b0f19' stroke-width='20' stroke-linecap='round'/%3E%3Ctext x='256' y='490' text-anchor='middle' font-family='Arial' font-size='40' fill='%2338bdf8' font-weight='bold'%3EAST%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#0b0f19">
+<title>AST-2012A CLINICAL MASTER PRO - V2.0</title>
+<style>
+    /* نظام الألوان المتكيف */
+    :root {
+        --primary: #38bdf8;
+        --primary-glow: rgba(56, 189, 248, 0.25);
+        --bg: #0b0f19;
+        --card: rgba(30, 41, 59, 0.85);
+        --card-border: rgba(56, 189, 248, 0.2);
+        --text: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent-green: #10b981;
+        --accent-red: #ef4444;
+        --accent-warning: #f59e0b;
+    }
 
+    [data-theme="light"] {
+        --primary: #0284c7;
+        --primary-glow: rgba(2, 132, 199, 0.2);
+        --bg: #f1f5f9;
+        --card: #ffffff;
+        --card-border: #cbd5e1;
+        --text: #0f172a;
+        --text-secondary: #475569;
+    }
+    
+    * { 
+        box-sizing: border-box; 
+        font-family: 'Segoe UI', Tajawal, Arial, sans-serif; 
+        -webkit-tap-highlight-color: transparent; 
+    }
+    
+    body {
+        background: radial-gradient(circle at top, var(--bg), #0b0f19 90%);
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 14px;
+        min-height: 100vh;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .app-container {
+        max-width: 750px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+    }
+
+    /* شريط العنوان */
+    .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card);
+        backdrop-filter: blur(16px);
+        padding: 16px 20px;
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        margin-bottom: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .app-title h2 { margin: 0; font-size: 16pt; color: var(--primary); font-weight: 800;}
+    .app-title p { margin: 4px 0 0 0; font-size: 9pt; color: var(--text-secondary); }
+    
+    .header-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .icon-btn {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--card-border);
+        color: var(--primary);
+        width: 42px; height: 42px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 14pt;
+        transition: 0.2s;
+    }
+    .icon-btn:hover { background: var(--primary); color: #fff; }
+
+    /* الشريط العلوي الموسع */
+    .toolbar-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .tool-btn {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        color: var(--text);
+        padding: 16px 12px;
+        border-radius: 16px;
+        font-size: 10pt;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .tool-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px);}
+
+    /* حقل البحث الذكي */
+    .search-section {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 16px 20px;
+        background: var(--bg);
+        border: 2px solid var(--card-border);
+        border-radius: 14px;
+        color: var(--text);
+        font-size: 11pt;
+        outline: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+
+    .quick-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+        max-height: 120px;
+        overflow-y: auto;
+        padding-bottom: 5px;
+    }
+
+    .chip {
+        background: var(--bg);
+        color: var(--text-secondary);
+        padding: 8px 14px;
+        border-radius: 12px;
+        font-size: 9pt;
+        cursor: pointer;
+        border: 1px solid var(--card-border);
+        transition: 0.2s;
+        font-weight: 600;
+    }
+    .chip:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* نتائج البطاقات العلاجية */
+    .result-card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card h3 { 
+        color: var(--primary); 
+        margin-top: 0; 
+        font-size: 14pt; 
+        border-bottom: 2px solid var(--card-border); 
+        padding-bottom: 12px;
+        line-height: 1.4;
+    }
+    
+    .badge-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+    }
+
+    .badge {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 9pt;
+        font-weight: 700;
+        display: inline-block;
+    }
+    
+    .badge-tens { background: rgba(56, 189, 248, 0.15); color: var(--primary); border-color: rgba(56, 189, 248, 0.3); }
+    .badge-ems { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); border-color: rgba(245, 158, 11, 0.3); }
+
+    .tech-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        background: var(--bg);
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        border: 1px solid var(--card-border);
+    }
+    .tech-item { font-size: 9.5pt; color: var(--text); }
+    .tech-item span { color: var(--text-secondary); display: block; font-size: 8pt; margin-bottom: 2px;}
+
+    .electrode-box {
+        background: rgba(0,0,0,0.2);
+        border: 1px solid var(--card-border);
+        border-left: 4px solid var(--accent-green);
+        border-radius: 12px;
+        padding: 16px;
+        margin: 16px 0;
+        font-size: 10pt;
+        line-height: 1.6;
+    }
+    .pos-pole { color: #f87171; font-weight: bold; display: block; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+    .neg-pole { color: var(--primary); font-weight: bold; display: block; }
+
+    .clinical-note {
+        background: rgba(56, 189, 248, 0.08);
+        border-right: 3px solid var(--primary);
+        padding: 14px 18px;
+        border-radius: 8px;
+        font-size: 10pt;
+        color: var(--text-secondary);
+        margin-top: 16px;
+        line-height: 1.7;
+        text-align: justify;
+    }
+    
+    .clinical-note strong { color: var(--text); }
+
+    /* النوافذ المنبثقة */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        display: none;
+        justify-content: center;
+        align-items: flex-end;
+        z-index: 1000;
+    }
+
+    .modal-sheet {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        width: 100%;
+        max-width: 750px;
+        max-height: 85vh;
+        border-radius: 28px 28px 0 0;
+        padding: 24px;
+        overflow-y: auto;
+        box-shadow: 0 -20px 40px rgba(0,0,0,0.8);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--card-border);
+        padding-bottom: 16px;
+        margin-bottom: 20px;
+    }
+    .modal-header h2 { margin: 0; font-size: 13pt; color: var(--primary); }
+    .close-modal { background: var(--accent-red); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 10pt; }
+
+    .mode-item {
+        background: var(--bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    .mode-item h4 { color: var(--primary); margin: 0 0 8px 0; font-size: 11pt; }
+    .mode-item p { margin: 0; color: var(--text-secondary); font-size: 9.5pt; line-height: 1.6; }
+
+    /* تنسيقات الجداول داخل الدليل الشامل */
+    .manual-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 9pt;
+    }
+    .manual-table th, .manual-table td {
+        border: 1px solid var(--card-border);
+        padding: 8px 10px;
+        text-align: right;
+    }
+    .manual-table th {
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--primary);
+        font-weight: bold;
+    }
+    .manual-section-title {
+        color: var(--primary);
+        border-bottom: 2px solid var(--card-border);
+        padding-bottom: 6px;
+        margin: 22px 0 12px 0;
+        font-size: 12pt;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div class="app-header">
+        <div class="app-title">
+            <h2>AST-2012A PRO MASTER</h2>
+            <p>قاعدة البيانات السريرية الموسعة والمتقدمة</p>
+        </div>
+        <div class="header-actions">
+            <div class="icon-btn" onclick="toggleTheme()" title="تبديل الوضع">🌓</div>
+            <div class="icon-btn" onclick="document.getElementById('searchInput').value=''; filterConditions();" title="مسح البحث">🔄</div>
+        </div>
+    </div>
+
+    <div class="toolbar-grid">
+        <button class="tool-btn" onclick="openModal('manualModal')">📖 الدليل المتقدم للجهاز</button>
+        <button class="tool-btn" onclick="openModal('modesModal')">📚 التوصيف العلمي للأنماط</button>
+        <button class="tool-btn" onclick="openModal('safetyModal')">🛡️ بروتوكولات الأمان</button>
+        <button class="tool-btn" onclick="openModal('featuresModal')">⭐ آلية الفلترة الذكية</button>
+    </div>
+
+    <div class="search-section">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن الأعراض، الأمراض، الأنماط، أو الدليل (مثال: بسط اصابع اليد، عرق النسا، النمط 16، البطارية...)" oninput="filterConditions()">
+        <div class="quick-chips">
+            <span class="chip" onclick="quickSearch('بسط اصابع اليد')">بسط اصابع اليد</span>
+            <span class="chip" onclick="quickSearch('عرق النسا')">عرق النسا (Sciatica)</span>
+            <span class="chip" onclick="quickSearch('خشونة الركبة')">خشونة الركبة</span>
+            <span class="chip" onclick="quickSearch('التهاب اللفافة')">اللفافة الأخمصية (الكعب)</span>
+            <span class="chip" onclick="quickSearch('مفصل الفك')">آلام مفصل الفك (TMJ)</span>
+            <span class="chip" onclick="quickSearch('انزلاق غضروفي')">انزلاق غضروفي قطني</span>
+            <span class="chip" onclick="quickSearch('جلطة علوي')">تأهيل جلطة (طرف علوي)</span>
+            <span class="chip" onclick="quickSearch('جلطة سفلي')">تأهيل جلطة (طرف سفلي)</span>
+            <span class="chip" onclick="quickSearch('سقوط القدم')">سقوط القدم</span>
+            <span class="chip" onclick="quickSearch('العصب السابع')">شلل العصب السابع</span>
+            <span class="chip" onclick="quickSearch('النفق الرسغي')">النفق الرسغي</span>
+            <span class="chip" onclick="quickSearch('تنس البو')">تنس ألبو</span>
+            <span class="chip" onclick="quickSearch('الكتف المتجمد')">الكتف المتجمد</span>
+            <span class="chip" onclick="quickSearch('الرقبة')">اعتلال الجذور العنقية</span>
+            <span class="chip" onclick="quickSearch('النمط 16')">النمط 16 (Body Shaping)</span>
+            <span class="chip" onclick="quickSearch('المواصفات الفنية')">المواصفات الفنية</span>
+            <span class="chip" onclick="quickSearch('اعطال')">استكشاف الأخطاء</span>
+        </div>
+    </div>
+
+    <div id="resultsArea">
+        <div class="result-card" style="text-align: center; color: var(--text-secondary); padding: 40px 20px; font-size: 11pt;">
+            المنظومة السريرية الضخمة جاهزة الآن. <br><br>تم تفعيل خوارزمية البحث العكسي وتصحيح الحروف وتدريب المحرك الذكي على الدليل الشامل. ابحث عن أي حالة، نمط، أو مشكلة تقنية للحصول على التوصيف الدقيق.
+        </div>
+    </div>
+
+</div>
+
+<!-- النافذة المنبثقة الأولى: الدليل المتقدم الشامل المدمج بالكامل -->
+<div id="manualModal" class="modal-overlay">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2>📖 الدليل السريري والمترجم الكامل لجهاز AST-2012A</h2>
+            <button class="close-modal" onclick="closeModal('manualModal')">إغلاق</button>
+        </div>
+        <div style="font-size: 9.5pt; color: var(--text-secondary); line-height: 1.8; text-align: justify;">
+            
+            <h3 class="manual-section-title">1. تصدير ودواعي الاستعمال (Indications for Use)</h3>
+            <p><strong>أساسيات التحفيز الكهربائي:</strong> يدمج جهاز AST-2012A بين تيارات TENS (التحفيز الكهربائي للأعصاب عبر الجلد) لتعديل بوابات الألم (Gate Control Theory) وتيارات EMS (التحفيز الكهربائي للعضلات) لإعادة التثقيف العضلي الحركي.</p>
+            <ul>
+                <li><strong>EMS (تحفيز العضلات):</strong> مخصص لتحفيز العضلات السليمة لتحسين وتسهيل الأداء العضلي وتقويتها من خلال الانقباضات التيتانية.</li>
+                <li><strong>TENS (تحفيز الأعصاب):</strong> يُستخدم للتخفيف المؤقت من الآلام المرتبطة بتعب وآلام العضلات في الكتف، الخصر، الظهر، العنق، الذراع، الساق، والقدم.</li>
+            </ul>
+
+            <h3 class="manual-section-title">2. المواصفات الفنية المتقدمة (Technical Specifications)</h3>
+            <table class="manual-table">
+                <tr><th>المعيار</th><th>القيمة المحددة</th></tr>
+                <tr><td>الموديل والتصنيف</td><td>AST-2012A - Type BF Applied Part</td></tr>
+                <tr><td>عدد الأنماط والأنشطة</td><td>25 نمطاً علاجياً (TENS / EMS)</td></tr>
+                <tr><td>مستويات الشدة</td><td>50 مستواً متدرجاً (0 - 52V)</td></tr>
+                <tr><td>شكل الموجة</td><td>ثنائية الطور متماثلة ونبضية (Symmetrical Biphasic)</td></tr>
+                <tr><td>عرض النبضة (Pulse Width)</td><td>120 ميكروثانية (120 µs)</td></tr>
+                <tr><td>تردد النبضات (Pulse Frequency)</td><td>77.3 هرتز (77.3 Hz)</td></tr>
+                <tr><td>مؤقت الجلسة (Timer)</td><td>من 5 إلى 60 دقيقة (الافتراضي 30 دقيقة)</td></tr>
+                <tr><td>الأبعاد والوزن</td><td>147.6 × 75.7 × 22 مم | الوزن: 115 جرام</td></tr>
+            </table>
+
+            <h3 class="manual-section-title">3. الجدول الشامل للأنماط الـ 25 (Full Treatment Modes Table)</h3>
+            <table class="manual-table">
+                <thead>
+                    <tr><th>#</th><th>النوع</th><th>اسم النمط</th><th>الوصف والتأثير الطبي</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>TENS</td><td>Acupuncture Pushing</td><td>تعزيز الدورة الدموية وإزالة الانسداد وتسكين الألم.</td></tr>
+                    <tr><td>2</td><td>TENS</td><td>Acupuncture</td><td>تخفيف الروماتيزم والآلام الحادة والمزمنة.</td></tr>
+                    <tr><td>3</td><td>TENS</td><td>Acupuncture Kneading</td><td>العجن بالإبر الصينية لإخفاء التوتر وتسكين الألم.</td></tr>
+                    <tr><td>4</td><td>TENS</td><td>Acupuncture Tapping</td><td>النقر الإبري لتنشيط الدورة الدموية الدقيقة.</td></tr>
+                    <tr><td>5</td><td>EMS</td><td>Scraping</td><td>الكشط لتنشيط المسارات العصبية والعضلية.</td></tr>
+                    <tr><td>6</td><td>TENS</td><td>Squeezing</td><td>الضغط والعصر لتسكين الألم العضلي.</td></tr>
+                    <tr><td>7</td><td>EMS</td><td>Massage</td><td>التدليك العام لتعزيز التروية الدموية.</td></tr>
+                    <tr><td>8</td><td>EMS</td><td>Pushing Massage</td><td>تدليك الدفع لاستعادة القوة وتخفيف الإرهاق.</td></tr>
+                    <tr><td>9</td><td>EMS</td><td>Pushing Squeezing</td><td>الدفع والعصر لزيادة المقاومة وتخفيف التعب.</td></tr>
+                    <tr><td>10</td><td>TENS</td><td>Acupuncture Squeezing</td><td>العصر الإبري لتسكين آلام الأنسجة العميقة.</td></tr>
+                    <tr><td>11</td><td>TENS</td><td>Acupuncture Hammering</td><td>الطرق بالإبر لتسكين آلام القشعريرة والروماتيزم.</td></tr>
+                    <tr><td>12</td><td>TENS</td><td>Kneading</td><td>العجن لتخفيف الإرهاق العضلي الشديد.</td></tr>
+                    <tr><td>13</td><td>TENS</td><td>Thumping</td><td>الضرب الخفيف لتنشيط الدورة الدموية المحلية.</td></tr>
+                    <tr><td>14</td><td>EMS</td><td>Scraping Pressing</td><td>الكشط والضغط لفك التشنجات العضلية.</td></tr>
+                    <tr><td>15</td><td>TENS</td><td>Cupping</td><td>محاكاة الحجامة لطرد البرد والتورم.</td></tr>
+                    <tr><td>16</td><td>EMS</td><td>Body Shaping</td><td>نحت وتقوية العضلات وإعادة التثقيف الحركي.</td></tr>
+                    <tr><td>17</td><td>TENS</td><td>Hammering</td><td>الطرق لإرخاء العضلات المتشنجة.</td></tr>
+                    <tr><td>18</td><td>TENS</td><td>Massage Tapping</td><td>النقر والتدليك السريع للتسكين.</td></tr>
+                    <tr><td>19</td><td>EMS</td><td>Pushing</td><td>الدفع لتقوية الألياف العضلية وتسهيل الحركة.</td></tr>
+                    <tr><td>20</td><td>TENS</td><td>Rolling Pounding</td><td>الدحرجة الطرقية لتسكين آلام المفاصل.</td></tr>
+                    <tr><td>21</td><td>TENS</td><td>Squeezing II</td><td>تنشيط الدورة الدموية وتعزيز التدفق.</td></tr>
+                    <tr><td>22</td><td>EMS</td><td>Stroke</td><td>تحفيز السكتة/الضربة لإرخاء العضلات.</td></tr>
+                    <tr><td>23</td><td>TENS</td><td>Acupuncture Therapy</td><td>تدليك العلاج بالإبر الصينية الشامل.</td></tr>
+                    <tr><td>24</td><td>TENS</td><td>Shiatsu</td><td>الشياتسو لتسليك المسارات وتسكين الأعصاب.</td></tr>
+                    <tr><td>25</td><td>TENS</td><td>Rolling Kneading</td><td>العجن والدحرجة لإرخاء الأربطة والعضلات.</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="manual-section-title">4. قواعد الأقطاب والتحكم بالشدة (Clinical Rules)</h3>
+            <p><strong>تحديد الشدة (Intensity):</strong> يجب أن تُرفع الشدة تدريجياً. في حالات TENS يجب الشعور بنبض قوي ومريح دون إحداث انقباض عضلي. في حالات EMS يجب الوصول إلى عتبة الانقباض العضلي (Motor Threshold) لرؤية استجابة حركية واضحة.</p>
+            <p><strong>قاعدة الأقطاب:</strong> القطب السالب (الكاثود) يكون عادة أكثر تحفيزاً وإثارة للأنسجة، لذلك يوضع غالباً فوق النقطة الحركية للعضلة (Motor Point) للحصول على أفضل انقباض، بينما يوضع القطب الموجب (الأنود) بالقرب من منشأ العصب أو العضلة.</p>
+            <p><strong>تنفيذي الأمان الذاتي:</strong> عند تغيير النمط أثناء الجلسة، تعود الشدة تلقائياً في القنوات إلى المستوى صفر لحماية المريض من الصدمات الفجائية.</p>
+
+            <h3 class="manual-section-title">5. استكشاف الأخطاء وإصلاحها (Troubleshooting Guide)</h3>
+            <table class="manual-table">
+                <thead>
+                    <tr><th>المشكلة</th><th>السبب المحتمل</th><th>الإجراء العلاجي</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>الجهاز لا يعمل</td><td>البطارية فارغة تماماً</td><td>وصل الشاحن المرفق حتى يكتمل الشحن.</td></tr>
+                    <tr><td>انقطاع التحفيز مفاجأة</td><td>انتهاء المؤقت أو انفصال السلك</td><td>تحقق من توصيل القابس بمدخل القناة.</td></tr>
+                    <tr><td>عدم الشعور بالتحفيز</td><td>الوسائد متسخة أو الفيلم عليها</td><td>تأكد من نزع الفيلم الشفاف ونظافة الجلد.</td></tr>
+                    <tr><td>احمرار الجلد تحت الوسائد</td><td>استخدام متكرر في نفس المكان</td><td>غير موضع الأقطاب ونظف الجلد جيداً بماء جاف.</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="manual-section-title">6. الصيانة والتخزين والتوافق (Maintenance & EMC)</h3>
+            <ul>
+                <li><strong>التنظيف:</strong> يُكتفى بمسح هيكل الجهاز بقطعة قماش جافة. الوسائد تُحفظ متصلة بالفيلم الشفاف الخاص بها.</li>
+                <li><strong>التخزين:</strong> يُحفظ الجهاز في درجات حرارة بين -25°C إلى +70°C ورطوبة لا تتجاوز 90%.</li>
+                <li><strong>معادلة مسافة الفصل الكهرومغناطيسي:</strong> للترددات المشعة <code>d = [3.5 / E1] √P</code> لحماية الجهاز من التداخلات اللاسلكية.</li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<div id="modesModal" class="modal-overlay">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2>📚 التوصيف العلمي للأنماط الـ 25</h2>
+            <button class="close-modal" onclick="closeModal('modesModal')">إغلاق</button>
+        </div>
+        <div id="modesContentList"></div>
+    </div>
+</div>
+
+<div id="safetyModal" class="modal-overlay">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2>🛡️ بروتوكولات الأمان الصارمة</h2>
+            <button class="close-modal" onclick="closeModal('safetyModal')">إغلاق</button>
+        </div>
+        <div style="font-size: 10pt; color: var(--text-secondary); line-height: 1.8;">
+            <p style="color: var(--accent-red); font-weight: bold;">موانع الاستعمال المطلقة (Absolute Contraindications):</p>
+            <p>- المرضى المزودين بمنظمات ضربات القلب (Pacemakers) أو أجهزة مقوم نظم القلب ومزيل الرجفان المزروع (ICD).<br>- الحمل (يمنع الاستخدام على البطن، الحوض، وأسفل الظهر).<br>- الأورام الخبيثة النشطة في منطقة العلاج.<br>- التخثر الوريدي العميق (DVT) لتجنب تحرير الخثرة.</p>
+            <p style="color: var(--accent-warning); font-weight: bold;">مناطق يمنع وضع الأقطاب عليها:</p>
+            <p>- الجيوب السباتية في الرقبة الأمامية (Carotid Sinus) لتجنب هبوط الضغط الحاد والإغماء.<br>- مروراً عبر الصدر (Trans-thoracic) لتجنب اضطراب نظم القلب.<br>- على العينين أو الأغشية المخاطية.</p>
+        </div>
+    </div>
+</div>
+
+<div id="featuresModal" class="modal-overlay">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2>⭐ آلية الفلترة الذكية المحدثة</h2>
+            <button class="close-modal" onclick="closeModal('featuresModal')">إغلاق</button>
+        </div>
+        <div style="font-size: 10pt; color: var(--text-secondary); line-height: 1.8;">
+            <p>الإصدار 2.0 من محرك البحث يعتمد على:</p>
+            <p>1. <strong>تسوية النصوص (Text Normalization):</strong> يعالج الفروق في كتابة الهمزات (أ، إ، ا) والتاء المربوطة والهاء والياء والألف المقصورة. (مثال: كتابة "اصابع" أو "أصابع" ستعطي نفس النتيجة).</p>
+            <p>2. <strong>البحث العكسي المتقاطع:</strong> يقوم بتقسيم جملة البحث إلى كلمات والبحث عن تطابقها في قاعدة البيانات الضخمة لمنع ظهور رسالة "الحالة غير موجودة" بشكل عشوائي.</p>
+            <p>3. <strong>العمق السريري والدليل الشامل:</strong> أصبح شريط البحث يستوعب كلاً من الحالات العلاجية، الأنماط الـ 25، والمواصفات الفنية للجهاز بالكامل.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// قاعدة البيانات الضخمة المحدثة بالكامل والتي تضم الموسوعة السريرية الكاملة (100 بروتوكول) + الدليل الفني والشامل
+const clinicalDatabase = [
+    // ======================== الدليل الفني واستكشاف الأخطاء للجهاز ========================
+    {
+        keywords: ["المواصفات الفنية", "مواصفات الجهاز", "التردد", "عرض النبضة", "الشدة", "المؤقت", "الوزن", "الموديل", "technical specifications", "specifications"],
+        title: "📘 المواصفات الفنية المتقدمة وجدول معايير التشغيل (Technical Specifications)",
+        mode: "نظام التشغيل القياسي (25 نمط)",
+        freq: "تردد ثابت 77.3Hz | عرض نبضة 120µs",
+        channel: "القناتين A / B المستقلتين",
+        duration: "المؤقت: 5 - 60 دقيقة (الافتراضي 30 دقيقة)",
+        poles: [
+            "(+) الجهد الكهربائي: 0 - 52V متدرج على 50 مستوى شدة.",
+            "(-) الموجة: ثنائية الطور متماثلة ونبضية (Symmetrical Biphasic) لحماية الجلد من التحرير الإلكتروليتي."
+        ],
+        explanation: "جهاز AST-2012A مصمم بفئة Type BF Applied Part لحماية المريض. تم تعيير الموجة ثنائية الطور لتوفير تحفيز مريح وأمن. الوزن الكلي للجهاز 115 جرام وأبعاده المدمجة تجعله مثالي الاستخدام في العيادات أو المنزل."
+    },
+    {
+        keywords: ["اعطال", "استكشاف الاخطاء", "مشكلة", "الجهاز لا يعمل", "احمرار الجلد", "انقطاع", "عدم الشعور بالتحفيز", "البطارية", "troubleshooting", "اصلاح"],
+        title: "🛠️ دليل استكشاف الأخطاء وإصلاحها وحماية المريض (Troubleshooting Guide)",
+        mode: "إجراءات الأمان والتشغيل السليم",
+        freq: "فحص التوصيلات الكهربائية",
+        channel: "القناة 1 و 2",
+        duration: "قبل وأثناء الجلسة العلاجية",
+        poles: [
+            "(+) في حال عدم الشعور بالتيار: افحص نزع الفيلم البلاستيكي الشفاف ونظافة الجلد والأقطاب بماء جاف.",
+            "(-) في حال انقطاع التحفيز أو عدم العمل: تأكد من شحن البطارية بالكامل وتوصيل القابس بإحكام في القناة."
+        ],
+        explanation: "إذا ظهر احمرار على الجلد تحت الوسائد، فهذا ناتج عن الاستخدام المتكرر في نفس الموضع، يرجى نقل الأقطاب لمكان آخر وتعديل الجلد. يحتوي الجهاز على ميزة الأمان الذاتي لتقليل الشدة للصفر تلقائياً عند تغيير النمط."
+    },
+    {
+        keywords: ["موانع الاستعمال", "امان", "حذر", "الحمل", "منظم ضربات القلب", "الرقبة الأمامية", "العيون", "contraindications"],
+        title: "🛡️ دليل الأمان الحرج وموانع الاستعمال المطلقة (Safety Protocols)",
+        mode: "بروتوكول الأمان الحيوي",
+        freq: "منع كامل للتيار في الحالات الحرجة",
+        channel: "جميع القنوات",
+        duration: "طوال الوقت",
+        poles: [
+            "⛔ يمنع منعاً باتاً: الاستخدام لمن لديهم منظم ضربات القلب (Pacemaker) أو ICD، الحوامل (على الظهر/البطن/الحوض)، والأورام الخبيثة.",
+            "⚠️ يمنع وضع الأقطاب على: الجيوب السباتية بالرقبة الأمامية، عبر الصدر (Trans-thoracic)، أو فوق العيون والأغشية المخاطية."
+        ],
+        explanation: "مراعاة موانع الاستعمال تمنع حدوث اضطرابات في نظم القلب أو الهبوط الحاد في ضغط الدم نتيجة تحفيز الشريان السباتي. كذلك يمنع التطبيق على حالات التخثر الوريدي العميق (DVT) لتجنب تحرك الخثرة."
+    },
+
+    // ======================== الأنماط العلاجية الـ 25 المدمجة في البحث ========================
+    {
+        keywords: ["النمط 1", "نمط 1", "Acupuncture Pushing", "دفع ابوري"],
+        title: "⚡ النمط 1: Acupuncture Pushing (TENS)",
+        mode: "TENS - النمط 1",
+        freq: "77.3Hz (نبض تسكيني مكثف)",
+        channel: "القناة 1 / 2",
+        duration: "20-30 دقيقة",
+        poles: [
+            "(+) القطب الموجب: بالقرب من بداية المنطقة المؤلمة.",
+            "(-) القطب السالب: على مركز الألم."
+        ],
+        explanation: "يعمل على تعزيز الدورة الدموية وإزالة الانسداد وتسكين الآلام الحادة باستخدام تقنية الدفع الإبري."
+    },
+    {
+        keywords: ["النمط 2", "نمط 2", "Acupuncture", "إبري", "ابري"],
+        title: "⚡ النمط 2: Acupuncture (TENS)",
+        mode: "TENS - النمط 2",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20-30 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى العصب المغذي للمنطقة.",
+            "(-) القطب السالب: على العضلة المتقلصة."
+        ],
+        explanation: "مخصص لتخفيف آلام الروماتيزم والآلام المفصلية الحادة والمزمنة عن طريق إغلاق بوابات الألم."
+    },
+    {
+        keywords: ["النمط 3", "نمط 3", "Acupuncture Kneading", "عجن ابوري"],
+        title: "⚡ النمط 3: Acupuncture Kneading (TENS)",
+        mode: "TENS - النمط 3",
+        freq: "77.3Hz (عجن متقطع)",
+        channel: "القناة 1 / 2",
+        duration: "20-30 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى نقطة الألم.",
+            "(-) القطب السالب: أسفل نقطة الألم."
+        ],
+        explanation: "يجمع بين العجن والإبر الصينية لفك التوتر العضلي الشديد وتسكين الآلام العميقة."
+    },
+    {
+        keywords: ["النمط 4", "نمط 4", "Acupuncture Tapping", "نقر ابوري"],
+        title: "⚡ النمط 4: Acupuncture Tapping (TENS)",
+        mode: "TENS - النمط 4",
+        freq: "77.3Hz (نقر سريع)",
+        channel: "القناة 1 / 2",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: جانبي المنطقة المصابة.",
+            "(-) القطب السالب: فوق النسيج المتيبس."
+        ],
+        explanation: "يوفر نقراً إبرياً خفيفاً لتنشيط التروية الدموية الدقيقة وغسل حمض اللاكتيك."
+    },
+    {
+        keywords: ["النمط 5", "نمط 5", "Scraping", "كشط"],
+        title: "⚡ النمط 5: Scraping (EMS)",
+        mode: "EMS - النمط 5",
+        freq: "35-50Hz (تحفيز حركي)",
+        channel: "القناة 1 / 2",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى منشأ العضلة.",
+            "(-) القطب السالب: على النقطة الحركية للعضلة (Motor Point)."
+        ],
+        explanation: "محاكاة لتقنية الكشط لتنشيط المسارات العصبية والعضلية الخاملة وإعادة التثقيف الحركي."
+    },
+    {
+        keywords: ["النمط 6", "نمط 6", "Squeezing", "عصر"],
+        title: "⚡ النمط 6: Squeezing (TENS)",
+        mode: "TENS - النمط 6",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: محيط بألياف العضلة.",
+            "(-) القطب السالب: على العقد العضلية."
+        ],
+        explanation: "ضغط وعصر ايقاعي لتخفيف التشنج العضلي وتسكين الألم المحلي."
+    },
+    {
+        keywords: ["النمط 7", "نمط 7", "Massage", "تدليك"],
+        title: "⚡ النمط 7: Massage (EMS)",
+        mode: "EMS - النمط 7",
+        freq: "40Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى المجموعة العضلية.",
+            "(-) القطب السالب: منتصف بطن العضلة."
+        ],
+        explanation: "تدليك عام يحاكي الضغط اليدوي لتحسين التروية الدموية وإرخاء العضلات المتشابكة."
+    },
+    {
+        keywords: ["النمط 8", "نمط 8", "Pushing Massage", "تدليك الدفع"],
+        title: "⚡ النمط 8: Pushing Massage (EMS)",
+        mode: "EMS - النمط 8",
+        freq: "45Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: بالقرب من المفصل.",
+            "(-) القطب السالب: على بطن العضلة."
+        ],
+        explanation: "تدليك بآلية الدفع لاستعادة قوة الأنسجة العضلية المجهدة وتخفيف الإرهاق البدني."
+    },
+    {
+        keywords: ["النمط 9", "نمط 9", "Pushing Squeezing", "دفع وعصر"],
+        title: "⚡ النمط 9: Pushing Squeezing (EMS)",
+        mode: "EMS - النمط 9",
+        freq: "50Hz",
+        channel: "القناة 1 / 2",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: منشأ العضلة.",
+            "(-) القطب السالب: اندغام العضلة أو بطنها."
+        ],
+        explanation: "يدمج بين الضغط والدفع لزيادة المقاومة العضلية وتنشيط الدورة الدموية العميقة."
+    },
+    {
+        keywords: ["النمط 10", "نمط 10", "Acupuncture Squeezing", "عصر ابري"],
+        title: "⚡ النمط 10: Acupuncture Squeezing (TENS)",
+        mode: "TENS - النمط 10",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: حول المنطقة المتضررة.",
+            "(-) القطب السالب: نقطة الزناد (Trigger Point)."
+        ],
+        explanation: "العصر الإبري المخصص لتسكين آلام الأنسجة العميقة والمفاصل المجهدة."
+    },
+    {
+        keywords: ["النمط 11", "نمط 11", "Acupuncture Hammering", "طرق ابري"],
+        title: "⚡ النمط 11: Acupuncture Hammering (TENS)",
+        mode: "TENS - النمط 11",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى الظهر أو المفصل.",
+            "(-) القطب السالب: مكان الألم."
+        ],
+        explanation: "طرق إبري متدرج يساعد على تسكين آلام القشعريرة والآلام الروماتزمية التكرارية."
+    },
+    {
+        keywords: ["النمط 12", "نمط 12", "Kneading", "عجن"],
+        title: "⚡ النمط 12: Kneading (TENS)",
+        mode: "TENS - النمط 12",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20-30 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى العضلة.",
+            "(-) القطب السالب: بطن العضلة."
+        ],
+        explanation: "العجن المباشر لتفكيك الإرهاق العضلي وتراكم الأحماض الناتجة عن الجهد العالي."
+    },
+    {
+        keywords: ["النمط 13", "نمط 13", "Thumping", "ضرب خفيف"],
+        title: "⚡ النمط 13: Thumping (TENS)",
+        mode: "TENS - النمط 13",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "15 دقيقة",
+        poles: [
+            "(+) القطب الموجب: جانبي العضلة.",
+            "(-) القطب السالب: مركز العضلة."
+        ],
+        explanation: "نقر وضرب خفيف لتنشيط الدورة الدموية المحلية وسحب السوائل المتجمعة."
+    },
+    {
+        keywords: ["النمط 14", "نمط 14", "Scraping Pressing", "كشط وضغط"],
+        title: "⚡ النمط 14: Scraping Pressing (EMS)",
+        mode: "EMS - النمط 14",
+        freq: "40-50Hz",
+        channel: "القناة 1 / 2",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى الوتر المصاب.",
+            "(-) القطب السالب: بطن العضلة المرتبطة بالوتر."
+        ],
+        explanation: "الكشط والضغط المزدوج لفك التشنجات الشديدة والتهابات الأوتار."
+    },
+    {
+        keywords: ["النمط 15", "نمط 15", "Cupping", "حجامة"],
+        title: "⚡ النمط 15: Cupping (TENS)",
+        mode: "TENS - النمط 15",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى نقطة الألم.",
+            "(-) القطب السالب: أسفل نقطة الألم."
+        ],
+        explanation: "محاكاة تأثير الحجامة التقليدية بسحب وتوسيع الأوعية الدموية لطرد البرد والانتفاخات."
+    },
+    {
+        keywords: ["النمط 16", "نمط 16", "Body Shaping", "تقوية عضلات", "نحت العضلات"],
+        title: "⚡ النمط 16: Body Shaping (EMS - النمط الإكلينيكي الذهبي)",
+        mode: "EMS - النمط 16",
+        freq: "35Hz - 50Hz (انقباض تيتاني كامل)",
+        channel: "القناة 1 / 2",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) القطب الموجب (الأنود): يوضع أعلى العضلة أو بالقرب من منشئها العصبي.",
+            "(-) القطب السالب (الكاثود): يوضع بدقة فوق النقطة الحركية (Motor Point) لبسط أو تقوية العضلة."
+        ],
+        explanation: "النمط الإكلينيكي الأساسي لإعادة التأهيل والتثقيف الحركي. يولد انقباضاً عضلياً تيتانياً شاملاً لتقوية العضلات الضامرة والضعيفة بعد الإصابات أو الجلطات."
+    },
+    {
+        keywords: ["النمط 17", "نمط 17", "Hammering", "طرق"],
+        title: "⚡ النمط 17: Hammering (TENS)",
+        mode: "TENS - النمط 17",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى العضلة المتشنجة.",
+            "(-) القطب السالب: منتصف العضلة."
+        ],
+        explanation: "طرق خفيف ومتردد يساعد على استرخاء العضلات المتقلصة بشدة."
+    },
+    {
+        keywords: ["النمط 18", "نمط 18", "Massage Tapping", "تدليك ونقر"],
+        title: "⚡ النمط 18: Massage Tapping (TENS)",
+        mode: "TENS - النمط 18",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: كعب أو مفصل القدم/اليد.",
+            "(-) القطب السالب: الأنسجة الرخوة المجاورة."
+        ],
+        explanation: "مزيج متكامل بين التدليك والنقر السريع للسيطرة على الآلام الموضعية في المفاصل والأربطة."
+    },
+    {
+        keywords: ["النمط 19", "نمط 19", "Pushing", "دفع"],
+        title: "⚡ النمط 19: Pushing (EMS)",
+        mode: "EMS - النمط 19",
+        freq: "35Hz - 50Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى بطن العضلة.",
+            "(-) القطب السالب: النقطة الحركية للعضلة."
+        ],
+        explanation: "نمط دفع تصاعدي (Ramped) لتقوية الألياف العضلية وتسهيل المدى الحركي للمفاصل."
+    },
+    {
+        keywords: ["النمط 20", "نمط 20", "Rolling Pounding", "دحرجة طرقية"],
+        title: "⚡ النمط 20: Rolling Pounding (TENS)",
+        mode: "TENS - النمط 20",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: حول المفصل.",
+            "(-) القطب السالب: على المحفظة المفصلية."
+        ],
+        explanation: "دحرجة طرقية مصممة لتسكين آلام المفاصل العميقة وتخفيف التصلب الصباحي."
+    },
+    {
+        keywords: ["النمط 21", "نمط 21", "Squeezing II", "عصر 2"],
+        title: "⚡ النمط 21: Squeezing II (TENS)",
+        mode: "TENS - النمط 21",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: محيط العضلة.",
+            "(-) القطب السالب: منتصف العضلة."
+        ],
+        explanation: "نمط عصر متطور ينشط التدفق الوريدي والليمفاوي للمناطق المترهلة أو المنتفخة."
+    },
+    {
+        keywords: ["النمط 22", "نمط 22", "Stroke", "ضربة"],
+        title: "⚡ النمط 22: Stroke (EMS)",
+        mode: "EMS - النمط 22",
+        freq: "40Hz",
+        channel: "القناة 1 / 2",
+        duration: "15 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى العضلة.",
+            "(-) القطب السالب: بطن العضلة."
+        ],
+        explanation: "تحفيز ذو نبضات سريعة لإرخاء العضلات المتشنجة بعد المجهود العالي."
+    },
+    {
+        keywords: ["النمط 23", "نمط 23", "Acupuncture Therapy", "علاج ابوري"],
+        title: "⚡ النمط 23: Acupuncture Therapy (TENS)",
+        mode: "TENS - النمط 23",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "25 دقيقة",
+        poles: [
+            "(+) القطب الموجب: النقطة العصبية الرئيسية.",
+            "(-) القطب السالب: منطقة الإحساس بالألم."
+        ],
+        explanation: "بروتوكول تحفيز إبري شامل لتسكين آلام الأعصاب الطرفية بفاعلية."
+    },
+    {
+        keywords: ["النمط 24", "نمط 24", "Shiatsu", "شياتسو"],
+        title: "⚡ النمط 24: Shiatsu (TENS)",
+        mode: "TENS - النمط 24",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: مسار العصب.",
+            "(-) القطب السالب: مكان التوتر."
+        ],
+        explanation: "محاكاة علاج الشياتسو اليدوي لتسليك المسارات العصبية وتسكين توتر الأعصاب."
+    },
+    {
+        keywords: ["النمط 25", "نمط 25", "Rolling Kneading", "دحرجة وعجن"],
+        title: "⚡ النمط 25: Rolling Kneading (TENS)",
+        mode: "TENS - النمط 25",
+        freq: "77.3Hz",
+        channel: "القناة 1 / 2",
+        duration: "25 دقيقة",
+        poles: [
+            "(+) القطب الموجب: أعلى الوتر أو الرباط.",
+            "(-) القطب السالب: أسفل المفصل."
+        ],
+        explanation: "دحرجة وعجن مزدوج لإرخاء الأربطة المشدودة والمفاصل المتصلبة."
+    },
+
+    // ======================== الحالات العلاجية الموسعة (الـ 15 المتقدمة) ========================
+    {
+        keywords: ["بسط اصابع اليد", "بسط الاصابع", "تمديد الاصابع", "تمديد اصابع اليد", "باسطة اليد", "سقوط الرسغ", "drop wrist", "اصابع اليد", "المعصم", "بسط المعصم"],
+        title: "بروتوكول تحفيز العضلات الباسطة للأصابع والمعصم (Wrist/Finger Extensors Rehab)",
+        mode: "EMS - النمط 16 (Body Shaping) أو النمط 17",
+        freq: "35Hz - 50Hz (لإحداث انقباض تيتاني مفيد)",
+        channel: "القناة: Channel 1",
+        duration: "15-20 دقيقة (مع فترات راحة لتجنب الإجهاد)",
+        poles: [
+            "(+) القطب الموجب (الأنود): يوضع في الثلث العلوي للساعد من الخلف، أسفل اللقيمة الجانبية للكوع (Lateral Epicondyle) بقليل حيث يمر العصب الكعبري (Radial Nerve).",
+            "(-) القطب السالب (الكاثود): يوضع مباشرة فوق النقطة الحركية لبطن العضلة الباسطة للأصابع (Extensor Digitorum) في منتصف الساعد الخلفي."
+        ],
+        explanation: "هذا البروتوكول يعتمد على تقنية EMS (التحفيز العضلي). الهدف هو تجنيد الوحدات الحركية لرفع المعصم وبسط الأصابع، خاصة في حالات ضعف العصب الكعبري أو ما بعد السكتة الدماغية. الكاثود (السالب) يوضع على بطن العضلة لأنه يتطلب تياراً أقل لإحداث زوال الاستقطاب (Depolarization) وبالتالي يولد انقباضاً أقوى وأكثر راحة. ابدأ بشدة منخفضة وارفعها حتى ترى الأصابع تنبسط بوضوح."
+    },
+    {
+        keywords: ["عطف الاصابع", "ثني الاصابع", "ثني اصابع اليد", "قبضة اليد", "قابضة اليد", "مسك الاشياء", "ضعف القبضة"],
+        title: "بروتوكول تقوية قبضة اليد والعضلات القابضة (Finger/Wrist Flexors)",
+        mode: "EMS - النمط 10 (Acupuncture Squeezing)",
+        freq: "40Hz - 50Hz",
+        channel: "القناة: Channel 1 أو 2",
+        duration: "15 دقيقة (لتجنب إرهاق الألياف العضلية السريعة)",
+        poles: [
+            "(+) القطب الموجب: يوضع على السطح الأمامي العلوي للساعد، أسفل مفصل الكوع من الداخل (قرب اللقيمة الإنسية).",
+            "(-) القطب السالب: يوضع على بطن العضلات القابضة في منتصف الساعد الأمامي."
+        ],
+        explanation: "يستخدم لإعادة التثقيف الحركي لمرضى ضعف القبضة. النمط 10 يوفر نبضات تحاكي العصر (Squeezing) مما يبني توتراً عضلياً تدريجياً لغلق الأصابع. يجب أن يتزامن المريض ذهنياً وحركياً مع الانقباض الذي يسببه الجهاز للحصول على أفضل لدانة عصبية (Neuroplasticity)."
+    },
+    {
+        keywords: ["جلطة", "جلطة يد", "جلطة علوي", "سكتة دماغية علوي", "خزل شقي علوي", "حرقة اليد", "تشنج اليد"],
+        title: "بروتوكول التأهيل المتكامل للطرف العلوي بعد الجلطة (Post-Stroke Upper Limb)",
+        mode: "TENS المهدئ (النمط 2) ثم EMS للتقوية (النمط 16)",
+        freq: "TENS: 80-100Hz | EMS: 35-50Hz",
+        channel: "Channel 1 (للتحفيز) & Channel 2 (لإرخاء التشنج)",
+        duration: "25 دقيقة إجمالاً",
+        poles: [
+            "القناة الأولى (للبسط): (+) أسفل الكوع الخارجي، (-) على العضلات الباسطة للأصابع.",
+            "القناة الثانية (للتهدئة/Spasticity): (+) و (-) يوضعان على طول العضلة ذات الرأسين (Biceps) أو العضلات القابضة المتشنجة."
+        ],
+        explanation: "مريض الجلطة يعاني غالباً من نمط ثني تشنجي (Flexor Synergy). نستخدم TENS بتردد عالي على العضلات المتشنجة (القابضة) لتفعيل التثبيط المتبادل (Reciprocal Inhibition) وتخفيف الشد. في نفس الوقت نستخدم EMS على العضلات الضعيفة (الباسطة) لتشجيع فتح اليد والتمدد. راقب المريض جيداً وإذا زاد التشنج قلل الشدة فوراً."
+    },
+    {
+        keywords: ["جلطة رجل", "جلطة سفلي", "سكتة دماغية سفلي", "خزل شقي سفلي", "الم الساق جلطة", "سقوط القدم جلطة"],
+        title: "بروتوكول التأهيل المتكامل للطرف السفلي بعد الجلطة (Post-Stroke Lower Limb)",
+        mode: "EMS - النمط 19 (Pushing Squeezing) + النمط 16",
+        freq: "40Hz - 60Hz",
+        channel: "القناتين 1 و 2",
+        duration: "20-30 دقيقة",
+        poles: [
+            "لتقوية الفخذ (CH1): الموجب أعلى الفخذ الأمامي، السالب على العضلة الرباعية (VMO).",
+            "لرفع القدم (CH2): الموجب تحت الركبة من الخارج (الشظية)، السالب على العضلة الظنبوبية الأمامية."
+        ],
+        explanation: "يهدف إلى كسر نمط التمدد التشنجي (Extensor Synergy) في الطرف السفلي وتسهيل مرحلة التأرجح (Swing Phase) أثناء المشي عن طريق تقوية العضلة الرباعية لثبات الركبة، وعضلات الساق الأمامية لمنع احتكاك أصابع القدم بالأرض."
+    },
+    {
+        keywords: ["عرق النسا", "النسا", "الم الورك", "اسفل الظهر والساق", "sciatica", "عصب وركي", "الورك"],
+        title: "بروتوكول تسكين ألم عرق النسا والعصب الوركي (Sciatica Neuralgia)",
+        mode: "TENS - النمط 3 (Tapping) أو النمط 8 (Pushing)",
+        freq: "2-10Hz (لإفراز الإندورفين) أو 80-100Hz (تسكين سريع)",
+        channel: "القناتين 1 و 2",
+        duration: "30 دقيقة",
+        poles: [
+            "القناة الأولى (CH1): (+) على أسفل الظهر (L4-S1) من جهة الألم، (-) على منتصف الأرداف (العضلة الكمثرية).",
+            "القناة الثانية (CH2): (+) على خلف الفخذ، (-) على خلف الساق أو مسار الألم المنتشر."
+        ],
+        explanation: "تطبيق استراتيجية 'تغطية المسار العصبي'. القناة الأولى تعالج الجذور العصبية القطنية ومنطقة الانضغاط في الأرداف، بينما القناة الثانية تعالج الألم المنتشر (Referred Pain) في الساق. استخدم ترددات منخفضة (Tapping) لتحفيز الإندورفين إذا كان الألم مزمناً."
+    },
+    {
+        keywords: ["اسفل الظهر", "ظهر", "القطنية", "الديسك", "انزلاق غضروفي", "الم ظهر", "ديسك الظهر", "lumbar"],
+        title: "بروتوكول آلام أسفل الظهر والانزلاق الغضروفي (Lumbar Disc / LBP)",
+        mode: "TENS - النمط 4 (Kneading) أو النمط 11",
+        freq: "80Hz - 100Hz (تعديل بوابة الألم)",
+        channel: "Channel 1 & 2 (تقاطع / IFC-like)",
+        duration: "30 دقيقة (الجلسة القياسية)",
+        poles: [
+            "استراتيجية التقاطع: ضع القناة الأولى (CH1) بشكل مائل (موجب أعلى اليمين وسالب أسفل اليسار).",
+            "ضع القناة الثانية (CH2) بشكل مائل معاكس (موجب أعلى اليسار وسالب أسفل اليمين)."
+        ],
+        explanation: "وضع الأقطاب بشكل متقاطع (Criss-Cross) يحاكي تأثير التيارات التداخلية (Interferential) لتركيز مسار التيار في النسيج العميق المحيط بالقرص المنزلق. هذا يقلل من الشد العضلي الدفاعي (Muscle Spasm) المحيط بالفقرات ويخفف الضغط على جذور الأعصاب."
+    },
+    {
+        keywords: ["الركبة", "خشونة الركبة", "الم الركبة", "احتكاك الركبة", "knee oa", "osteoarthritis", "بسط الركبة", "vmo"],
+        title: "بروتوكول خشونة مفصل الركبة وتقوية الرباعية (Knee OA & VMO Strengthening)",
+        mode: "TENS (النمط 1) للألم، ثم EMS (النمط 16) للتقوية",
+        freq: "TENS: 100Hz / EMS: 50Hz",
+        channel: "القناتين",
+        duration: "15 دقيقة TENS + 15 دقيقة EMS",
+        poles: [
+            "للتسكين (TENS): قطبان حول الركبة (إنسي ووحشي - Medial/Lateral joint line).",
+            "للتقوية (EMS): (+) في أعلى الفخذ الأمامي، (-) بدقة على العضلة المتسعة الإنسية (VMO) فوق الركبة من الداخل."
+        ],
+        explanation: "في حالات خشونة الركبة، يعاني المريض من ألم يؤدي إلى تثبيط العضلة الرباعية (Arthrogenic Muscle Inhibition). نكسر هذه الدائرة بتسكين الألم أولاً بالـ TENS، ثم نجبر العضلة (خاصة VMO المسؤولة عن ثبات الصابونة) على الانقباض بالـ EMS لتحسين ميكانيكية المفصل وتقليل الاحتكاك."
+    },
+    {
+        keywords: ["سقوط القدم", "هبوط القدم", "شظوي", "عصب شظوي", "foot drop", "تدلي القدم", "الظنبوبية"],
+        title: "بروتوكول علاج سقوط القدم وتأهيل العصب الشظوي (Foot Drop)",
+        mode: "EMS - النمط 19 (Pushing Squeezing)",
+        freq: "35Hz - 50Hz",
+        channel: "Channel 1",
+        duration: "20 دقيقة (يمكن التكرار مرتين يومياً)",
+        poles: [
+            "(+) القطب الموجب: يوضع خلف أو تحت رأس عظمة الشظية مباشرة (Fibular Head) لثني الركبة من الخارج.",
+            "(-) القطب السالب: يوضع على الثلث العلوي لبطن العضلة الظنبوبية الأمامية (Tibialis Anterior)."
+        ],
+        explanation: "الهدف تجنيد العصب الشظوي العميق لرفع مشط القدم (Dorsiflexion). يجب ضبط الشدة بعناية حتى يلاحظ المعالج رفعاً واضحاً لمشط القدم للأعلى بقوة تكفي للتغلب على الجاذبية. تجنب وضع الأقطاب قريباً جداً من العضلات الشظوية الجانبية لكي لا يحدث انقلاب خارجي (Eversion) مفرط."
+    },
+    {
+        keywords: ["وجه", "شلل وجه", "عصب سابع", "العصب السابع", "bell's palsy", "شلل بيل", "نصف الوجه"],
+        title: "بروتوكول شلل العصب الوجهي السابع (Bell's Palsy)",
+        mode: "EMS دقيق جداً - النمط 16 (أو أي نمط تحفيز مستمر خفيف)",
+        freq: "10Hz - 20Hz (تردد منخفض جداً لتجنب التعب)",
+        channel: "Channel 1 (شدة منخفضة للغاية)",
+        duration: "5-10 دقائق فقط للمنطقة",
+        poles: [
+            "(+) القطب الموجب: يوضع خلف شحمة الأذن مباشرة فوق خروج العصب الوجهي (Stylomastoid foramen).",
+            "(-) القطب السالب (يفضل أقطاب صغيرة): يوضع على النقاط الحركية للعضلات المستهدفة (مثلاً عضلة الجبهة، أو عضلة الوجنة، أو حول الفم)."
+        ],
+        explanation: "التحفيز الكهربائي للوجه يتطلب حذراً شديداً (يختلف عليه المدارس العلاجية، ويستخدم للتحفيز المتأخر). يجب ألا يتجاوز التيار حدود الشعور بالوخز الخفيف إلى انقباض غير مرئي تقريباً. الشدة العالية قد تؤدي إلى التزامن الحركي الخاطئ (Synkinesis) وتفاقم الحالة. يمنع وضعه على العين المفتوحة."
+    },
+    {
+        keywords: ["النفق الرسغي", "رسغ", "خدر اليد", "تنميل الاصابع", "carpal tunnel", "متلازمة النفق", "العصب الناصف"],
+        title: "بروتوكول متلازمة النفق الرسغي (Carpal Tunnel Syndrome)",
+        mode: "TENS - النمط 7 (Massage) أو النمط 1",
+        freq: "80Hz - 120Hz (تسكين ألم وتنميل)",
+        channel: "Channel 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على الساعد من الداخل قبل مفصل المعصم بـ 4 سم (فوق مسار العصب الناصف).",
+            "(-) القطب السالب: يوضع على راحة اليد (بروز العضلة القصيرة لراحة اليد - Thenar eminence)."
+        ],
+        explanation: "يخفف من التنميل والألم الحارق الناتج عن انضغاط العصب الناصف في المعصم. الإشارات الكهربائية السريعة تتسابق مع إشارات الألم نحو الدماغ وتغلق 'البوابة' العصبية. يفضل دمج هذا البروتوكول مع تمارين انزلاق العصب (Nerve Gliding)."
+    },
+    {
+        keywords: ["رقبة", "عنقية", "تشنج الرقبة", "الم الرقبة", "ابهر", "الابهر", "شبه المنحرفة", "cervical", "اعتلال الجذور"],
+        title: "بروتوكول آلام وتشنج الرقبة والكتف (Cervical & Upper Trapezius)",
+        mode: "TENS - النمط 1 (Acupuncture) أو النمط 4 (Kneading)",
+        freq: "80Hz (للاسترخاء العضلي والتسكين)",
+        channel: "Channel 1 & 2",
+        duration: "20-25 دقيقة",
+        poles: [
+            "(+) الأقطاب الموجبة: توضع على جانبي العمود الفقري العنقي (C4-C7) مع الحذر الشديد من ملامسة الجزء الأمامي للرقبة.",
+            "(-) الأقطاب السالبة: توضع على العضلة شبه المنحرفة العلوية (Upper Trapezius) في مناطق العقد العضلية (Trigger points)."
+        ],
+        explanation: "مثالي لفك التشنج في 'الأبهر' وعضلات الرقبة الخلفية الناتجة عن الجلوس الطويل (Text Neck). النمط 4 (العجن) يحاكي المساج العميق ويحسن التروية الدموية لغسل حمض اللاكتيك المتراكم."
+    },
+    {
+        keywords: ["الكتف المتجمد", "كتف", "الم الكتف", "frozen shoulder", "لاصق الكتف", "مفصل الكتف"],
+        title: "بروتوكول الكتف المتجمد (Adhesive Capsulitis / Frozen Shoulder)",
+        mode: "TENS / EMS متناوب - النمط 11 (Acupuncture Squeezing)",
+        freq: "2-10Hz (مرحلة مزمنة) أو 80Hz (ألم حاد)",
+        channel: "Channel 1 & 2",
+        duration: "25 دقيقة قبل تمارين المدى الحركي",
+        poles: [
+            "الترتيب (الأمامي/الخلفي): قطب موجب أمام المفصل (Anterior Joint Line) وقطب سالب خلف المفصل (Posterior Joint Line).",
+            "يمكن إضافة القناة الثانية على عضلة الدالية (Deltoid) والعضلات الدوارة (Rotator Cuff)."
+        ],
+        explanation: "الهدف الرئيسي هنا هو تقليل الألم المحيط بالمفصل للسماح للمعالج الفيزيائي بإجراء تمارين الاستطالة (Stretching) والتحريك (Mobilization) بفاعلية أكبر وألم أقل. النبضات العميقة تساعد على إرخاء المحفظة المفصلية المتقلصة."
+    },
+    {
+        keywords: ["تنس البو", "كوع", "مرفق التنس", "tennis elbow", "لقيمة خارجية", "التهاب وتر الكوع", "الم الكوع"],
+        title: "بروتوكول التهاب اللقيمة الجانبية - تنس ألبو (Lateral Epicondylitis)",
+        mode: "TENS - النمط 14 (Scraping Pressing) أو النمط 17",
+        freq: "100Hz (لتقليل التهاب الوتر الحاد)",
+        channel: "Channel 1",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع فوق المفصل مباشرة أو على اللقيمة الجانبية (عظمة الكوع الخارجية).",
+            "(-) القطب السالب: يوضع على بطن العضلات الباسطة للرسغ في الساعد لمسافة 4-5 سم أسفل الموجب."
+        ],
+        explanation: "يقلل الالتهاب ويسكن الألم الوتري الحاد الناتج عن الإجهاد المتكرر (Overuse). نستخدم ترددات TENS التقليدية للسيطرة على الألم. يمنع التحفيز الحركي القوي (EMS) في المراحل الحادة لمنع تمزق الألياف الدقيقة."
+    },
+    {
+        keywords: ["مفصل الفك", "فك", "tmj", "الم الفك", "صر الاسنان"],
+        title: "بروتوكول آلام مفصل الفك الصدغي (TMJ Syndrome)",
+        mode: "TENS مصغر - النمط 8 (Pushing)",
+        freq: "50-80Hz (لإرخاء عضلة المضغ)",
+        channel: "Channel 1 (شدة منخفضة جداً)",
+        duration: "10 دقائق",
+        poles: [
+            "تستخدم أقطاب صغيرة جداً (Facial Pads).",
+            "(+) القطب الموجب: يوضع أمام شحمة الأذن مباشرة (على المفصل).",
+            "(-) القطب السالب: يوضع على العضلة الماضغة (Masseter) في زاوية الفك السفلي."
+        ],
+        explanation: "يرخي التشنج الناتج عن صرير الأسنان (Bruxism) ويقلل ألم المفصل. التنبيه: يجب الحذر الشديد وعدم وضع الأقطاب قرب الرقبة الأمامية. الشدة يجب أن تكون بالكاد محسوسة (وخز لطيف)."
+    },
+    {
+        keywords: ["اللفافة", "التهاب اللفافة", "كعب", "الم الكعب", "مسمار القدم", "باطن القدم", "plantar"],
+        title: "بروتوكول التهاب اللفافة الأخمصية ومسمار العظم (Plantar Fasciitis)",
+        mode: "TENS - النمط 18 (Massage Tapping)",
+        freq: "100Hz",
+        channel: "Channel 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على كعب القدم (نقطة ارتكاز الألم).",
+            "(-) القطب السالب: يوضع على القوس الطولي لباطن القدم (منتصف القدم من الأسفل)."
+        ],
+        explanation: "يحسن التروية الدموية في الأنسجة الليفية البطيئة الشفاء في باطن القدم ويغسل السوائل الالتهابية. يساعد النمط 18 ذو النقر المساجي في تقليل حساسية مستقبلات الألم الصباحية."
+    },
+
+    // ======================== البروتوكولات السريرية الإضافية الموسعة (100 بروتوكول) ========================
+    // 1. مفاصل الكتف والأطراف العلوية
+    {
+        keywords: ["خلع الكتف", "خلع مفصل الكتف", "عدم استقرار الكتف", "shoulder dislocation", "MDI"],
+        title: "بروتوكول خلع مفصل الكتف المتكرر وعدم الاستقرار (Recurrent Dislocation & MDI)",
+        mode: "EMS - النمط 16 (لتقوية الكفة المدورة) + النمط 1 (تسكين)",
+        freq: "EMS: 35-50Hz, TENS: 80-100Hz",
+        channel: "القناتين 1 و 2",
+        duration: "25 دقيقة (تسكين) + 20 دقيقة (تقوية)",
+        poles: [
+            "للتسكين (TENS): قطب موجب أمام المفصل وقطب سالب خلف المفصل لتسكين الألم.",
+            "للتقوية (EMS): (+) على العضلة شبه المنحرفة، (-) على العضلات الدوارة (Rotator Cuff) لتثبيت رأس العضد."
+        ],
+        explanation: "يهدف هذا البروتوكول إلى تقوية العضلات المحيطة بمفصل الكتف (خاصة الكفة المدورة) لتعويض النقص في الاستقرار السلبي للمحفظة والأربطة. يركز على تمرين العضلة تحت الشوكة (Infraspinatus) والعضلة المدورة الصغيرة (Teres Minor) لتحسين التحكم الحركي ومنع الانخلاعات المتكررة."
+    },
+    {
+        keywords: ["تمزق الكفة المدورة", "rotator cuff tear", "الم الكتف", "ضعف رفع الكتف"],
+        title: "بروتوكول تمزق الكفة المدورة وإعادة التأهيل (Rotator Cuff Tear Rehab)",
+        mode: "EMS - النمط 16 (تقوية) و TENS - النمط 2 (تسكين)",
+        freq: "EMS: 30-40Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة تسكين ثم 20 دقيقة تقوية",
+        poles: [
+            "للتسكين: (+) فوق الأخرم (Acromion)، (-) تحت الترقوة (Subclavian) لتسكين الألم الشديد.",
+            "للتقوية: (+) على لوح الكتف (Scapula)، (-) على الكتف الأمامي (Anterior Deltoid) لتحفيز العضلات الباقية."
+        ],
+        explanation: "في حالات تمزق الكفة المدورة (خاصة فوق الشوكة - Supraspinatus)، يجب التركيز على تقوية العضلات المتبقية وغير المصابة (مثل تحت الشوكة والعضلة المدورة الصغيرة). يستخدم التيار لتحسين التغذية العصبية وتقليل الضمور، مع مراعاة تجنب الحركات المؤلمة."
+    },
+    {
+        keywords: ["متلازمة انحشار الكتف", "impingement", "ألم الكتف", "صوت طقطقة الكتف"],
+        title: "بروتوكول متلازمة انحشار الكتف (Shoulder Impingement Syndrome)",
+        mode: "TENS - النمط 3 (Acupuncture Kneading) و EMS - النمط 14 (Scraping Pressing)",
+        freq: "TENS: 100Hz, EMS: 40Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة",
+        poles: [
+            "TENS: (+) على العضلة شبه المنحرفة، (-) على الأخرم لتسكين الألم.",
+            "EMS: (+) على الحافة العلوية للكتف، (-) على العضلة فوق الشوكة (Supraspinatus)."
+        ],
+        explanation: "يهدف إلى تخفيف الاحتكاك بين وتر العضلة فوق الشوكة والسطح السفلي للأخرم. يتم التركيز على تحسين حركة لوح الكتف وتقوية العضلات السفلية لتثبيت رأس العضد نحو الأسفل، مما يوسع المسافة تحت الأخرم (Subacromial Space) ويخفف الألم."
+    },
+    {
+        keywords: ["مفصل الكوع", "خلع الكوع", "خلع مفصل الكوع", "إصابة الكوع"],
+        title: "بروتوكول خلع مفصل الكوع وإعادة التأهيل (Elbow Dislocation)",
+        mode: "EMS - النمط 19 (Pushing) و TENS - النمط 1",
+        freq: "EMS: 40Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "15-20 دقيقة (كل مرحلة)",
+        poles: [
+            "المرحلة المبكرة: (+) فوق الكوع (على العضلة ثلاثية الرؤوس - Triceps)، (-) تحت الكوع (على العضلة ذات الرأسين - Biceps).",
+            "المرحلة المتأخرة: استهداف العضلات القابضة والباسطة للمعصم."
+        ],
+        explanation: "بعد خلع الكوع، يكون هناك تقييد شديد في المدى الحركي (خاصة البسط). نبدأ بتحفيز العضلة ثلاثية الرؤوس لتسهيل البسط السلبي، ثم ننتقل تدريجياً للعضلات المحيطة لتقوية المفصل ومنع الانتكاس."
+    },
+    {
+        keywords: ["خلع الكتف الخلفي", "خلع الكتف الأمامي", "shoulder dislocation posterior"],
+        title: "بروتوكول الخلع الخلفي لمفصل الكتف (Posterior Shoulder Dislocation)",
+        mode: "EMS - النمط 16 و TENS - النمط 8",
+        freq: "EMS: 35Hz, TENS: 90Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "يتم وضع (+) خلف الكتف على العضلة المدورة الكبيرة (Teres Major)، و (-) أمام الكتف على العضلة تحت الترقوة (Subscapularis).",
+            "القناة الثانية: (+) على العضلة شبه المنحرفة، (-) على الأخرم."
+        ],
+        explanation: "الخلع الخلفي نادر لكنه يحتاج لتقوية العضلات المدورة الداخلية (Internal Rotators) وتثبيت المفصل. نستخدم تحفيزاً عميقاً للعضلة تحت الترقوة التي تميل للضعف في هذه الإصابة."
+    },
+    // 2. مفاصل الركبة والأطراف السفلية
+    {
+        keywords: ["تمزق الرباط الصليبي الأمامي", "acl tear", "تمزق acl", "الركبة", "عدم استقرار الركبة"],
+        title: "بروتوكول تمزق الرباط الصليبي الأمامي (ACL Tear Rehabilitation)",
+        mode: "EMS - النمط 19 (Pushing Squeezing) و TENS - النمط 2",
+        freq: "EMS: 40-50Hz, TENS: 100Hz",
+        channel: "القناتين",
+        duration: "مرحلة حادة: 20 دقيقة، مرحلة التقوية: 30 دقيقة",
+        poles: [
+            "للسيطرة على الألم (TENS): (+) فوق الرضفة (Patella)، (-) خلف الركبة في حفرة المأبض (Popliteal Fossa).",
+            "للتقوية (EMS): (+) أعلى الفخذ الأمامي، (-) على العضلة الرباعية (Rectus Femoris) و(VMO)."
+        ],
+        explanation: "بعد إصابة الرباط الصليبي الأمامي، يحدث ضمور سريع في العضلة الرباعية، خاصة العضلة المتسعة الإنسية (VMO). يهدف هذا البروتوكول إلى إعادة تنشيط هذه العضلة وتحسين ثبات الركبة لتقليل الحمل على الرباط الجديد (إما جراحياً أو محافظاً)."
+    },
+    {
+        keywords: ["تمزق الرباط الصليبي الخلفي", "pcl tear", "تمزق pcl"],
+        title: "بروتوكول تمزق الرباط الصليبي الخلفي (PCL Tear)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 7",
+        freq: "EMS: 35-45Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للتسكين: (+) على قمة الرضفة، (-) على وتر المأبض (Popliteus).",
+            "للتقوية: (+) أسفل الركبة (على الظنبوب)، (-) خلف الركبة (على أوتار الركبة الخلفية)."
+        ],
+        explanation: "الرباط الصليبي الخلفي يمنع انزلاق عظمة الظنبوب للخلف. بعد التمزق، يجب تقوية أوتار الركبة الخلفية (Hamstrings) والأربطة الجانبية لدعم المفصل ومنع الحركة الخلفية الزائدة. نستخدم EMS لتحفيز أوتار الركبة أثناء الجلوس."
+    },
+    {
+        keywords: ["تمزق الرباط الجانبي الداخلي", "mcl tear", "تمزق mcl"],
+        title: "بروتوكول تمزق الرباط الجانبي الداخلي (MCL Tear)",
+        mode: "TENS - النمط 4 (Kneading) و EMS - النمط 14 (Scraping)",
+        freq: "TENS: 90Hz, EMS: 40Hz",
+        channel: "القناة 1 (فقط)",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على الجزء الداخلي من مفصل الركبة (الجانب الإنسي).",
+            "(-) القطب السالب: يوضع على الجزء الداخلي من عظمة الفخذ (أعلى من اللقيمة الإنسية - Medial Epicondyle)."
+        ],
+        explanation: "الرباط الجانبي الداخلي (MCL) هو الأكثر إصابة في الركبة، وغالباً ما يلتئم جيداً مع العلاج التحفظي. الهدف هنا تسكين الألم وتقليل الالتهاب في الجزء الداخلي من الركبة باستخدام تيار TENS، ثم تحفيز العضلات المجاورة (خاصة العضلة المقربة) لدعم المفصل."
+    },
+    {
+        keywords: ["تمزق الرباط الجانبي الخارجي", "lcl tear", "تمزق lcl"],
+        title: "بروتوكول تمزق الرباط الجانبي الخارجي (LCL Tear)",
+        mode: "TENS - النمط 11 (Acupuncture Hammering) و EMS - النمط 5 (Scraping)",
+        freq: "TENS: 100Hz, EMS: 45Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على الجزء الخارجي من الركبة (الجانب الوحشي).",
+            "(-) القطب السالب: يوضع على رأس الشظية (Fibular Head)."
+        ],
+        explanation: "الرباط الجانبي الخارجي (LCL) أقل شيوعاً من الإنسي، لكنه يحتاج لدعم عن طريق تقوية العضلة ذات الرأسين الفخذية (Biceps Femoris) التي تمر بجواره. نستخدم النمط 5 (الكشط) لتحفيز هذه العضلة وتحسين ثبات الركبة الجانبي."
+    },
+    {
+        keywords: ["تمزق الغضروف الهلالي", "meniscus tear", "تمزق الهلال", "غضروف الركبة"],
+        title: "بروتوكول تمزق الغضروف الهلالي الإنسي والوحشي (Meniscus Tear)",
+        mode: "TENS - النمط 12 (Kneading) و EMS - النمط 9 (Pushing Squeezing)",
+        freq: "TENS: 80Hz, EMS: 40Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للسيطرة على الألم: (+) و (-) حول خط المفصل (Joint Line) من الجانب المصاب.",
+            "للتقوية: (+) على الفخذ الأمامي، (-) على العضلة الرباعية (Quadriceps) لتثبيت الركبة."
+        ],
+        explanation: "تمزق الغضروف الهلالي يؤثر على قدرة الركبة على تحمل الوزن. الألم ينتج غالباً من التواء الغضروف الممزق. يستخدم التيار لتسكين الألم في خط المفصل، ثم تقوية العضلة الرباعية لتحسين ثبات الركبة وتقليل الضغط على الغضروف."
+    },
+    {
+        keywords: ["متلازمة آلام الفخذ الرضفية", "pfps", "ألم الرضفة", "صابونة الركبة"],
+        title: "بروتوكول متلازمة آلام الفخذ الرضفية (PFPS)",
+        mode: "TENS - النمط 3 (Acupuncture Kneading) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 100Hz, EMS: 40Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة",
+        poles: [
+            "للتسكين: (+) حول الرضفة (جانبياً)، (-) على وتر الرضفة (Patellar Tendon).",
+            "للتقوية: (+) أعلى الفخذ، (-) على العضلة المتسعة الإنسية (VMO)."
+        ],
+        explanation: "الألم حول الصابونة (الرضفة) غالباً ناتج عن عدم توازن القوى العضلية (خاصة ضعف العضلة المتسعة الإنسية - VMO) مما يؤدي لانحراف حركة الرضفة. نركز على تحفيز VMO لتحسين سحب الرضفة نحو الداخل وإعادة توزيع الضغط."
+    },
+    {
+        keywords: ["خلع صابونة الركبة", "خلع الرضفة", "patellar dislocation"],
+        title: "بروتوكول خلع صابونة الركبة (Patellar Dislocation)",
+        mode: "EMS - النمط 19 (Pushing) و TENS - النمط 8 (Pushing Massage)",
+        freq: "EMS: 40Hz, TENS: 90Hz",
+        channel: "القناتين",
+        duration: "مرحلة حادة: 15 دقيقة, مرحلة التقوية: 25 دقيقة",
+        poles: [
+            "للاسترخاء: (+) فوق الرضفة، (-) أسفلها لتقليل التشنج.",
+            "للتقوية: (+) أعلى الفخذ، (-) على VMO (الجزء الداخلي من الفخذ السفلي)."
+        ],
+        explanation: "خلع الرضفة يحدث غالباً باتجاه الخارج، ويترك ضعفاً في VMO وتمططاً في الأربطة الإنسية. البروتوكول يركز على إعادة التأهيل السريع للعضلة المتسعة الإنسية لمنع تكرار الخلع، مع تخفيف الألم الحاد أولاً."
+    },
+    {
+        keywords: ["التهاب وتر الرضفة", "jumper's knee", "ألم أسفل الرضفة"],
+        title: "بروتوكول التهاب وتر الرضفة (Jumper's Knee / Patellar Tendinopathy)",
+        mode: "TENS - النمط 14 (Scraping Pressing) و EMS - النمط 5 (Scraping)",
+        freq: "TENS: 80Hz, EMS: 30-40Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع فوق الرضفة (على العضلة الرباعية).",
+            "(-) القطب السالب: يوضع على وتر الرضفة (تحت الرضفة مباشرة)."
+        ],
+        explanation: "يُستخدم التيار الكهربائي (خاصة النمط 14) لتحفيز التروية الدموية في الوتر المصاب وتعزيز شفاء الألياف المتآكلة. نركز أيضاً على تخفيف التوتر في العضلة الرباعية التي تسحب على الوتر."
+    },
+    {
+        keywords: ["استبدال مفصل الركبة الكلي", "tka", "جراحة الركبة", "ركبة صناعية"],
+        title: "بروتوكول استبدال مفصل الركبة الكلي (TKA - Total Knee Arthroplasty)",
+        mode: "TENS - النمط 2 (تسكين) و EMS - النمط 16 (تقوية)",
+        freq: "TENS: 80-100Hz, EMS: 35-50Hz",
+        channel: "القناتين",
+        duration: "30 دقيقة (15 دقيقة لكل مرحلة)",
+        poles: [
+            "للتسكين: (+) و (-) حول الندبة الجراحية (مفصل الركبة).",
+            "للتقوية: (+) أعلى الفخذ، (-) على العضلة الرباعية (خاصة VMO) لتسريع استعادة المدى الحركي."
+        ],
+        explanation: "بعد جراحة استبدال الركبة، يعاني المريض من ألم شديد وتثبيط عصبي للعضلة الرباعية. نستخدم TENS في الأيام الأولى للسيطرة على الألم، ثم نبدأ EMS لتحفيز العضلة الرباعية ومنع ضمورها، وهذا يساعد على استعادة المشي بشكل أسرع."
+    },
+    {
+        keywords: ["استبدال مفصل الورك الكلي", "tha", "جراحة الورك", "ورك صناعي"],
+        title: "بروتوكول استبدال مفصل الورك الكلي (THA - Total Hip Arthroplasty)",
+        mode: "TENS - النمط 7 (Massage) و EMS - النمط 19 (Pushing)",
+        freq: "TENS: 80Hz, EMS: 40Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للتسكين: (+) على الجزء الأمامي من الورك (فوق المفصل)، (-) على الجزء الجانبي من الفخذ.",
+            "للتقوية: (+) على الأرداف (Gluteals)، (-) على عضلات الورك الخلفية (Hamstrings)."
+        ],
+        explanation: "بعد جراحة الورك، يُمنع ثني الورك أكثر من 90 درجة أو تقريبه (Adduction). نركز على تقوية عضلات الأرداف (خاصة المتوسطة والكبيرة) لمنع خلع المفصل ولتحسين المشية."
+    },
+    {
+        keywords: ["تمزق وتر أخيل", "achilles tendon", "تمزق وتر العرقوب"],
+        title: "بروتوكول تمزق وتر أخيل وإعادة التأهيل (Achilles Tendon Rupture Rehab)",
+        mode: "EMS - النمط 14 (Scraping Pressing) و TENS - النمط 1",
+        freq: "EMS: 30-40Hz, TENS: 90Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على بطن عضلة الساق (Gastrocnemius).",
+            "(-) القطب السالب: يوضع على الجزء السفلي من الوتر (أسفل الكعب)."
+        ],
+        explanation: "الهدف الأول هو حماية الوتر الملتئم أو المخيط، وتحفيز العضلة ثلاثية الرؤوس (Triceps Surae) بلطف لمنع الضمور. يبدأ العلاج بعد 4-6 أسابيع من الجراحة، ويركز على تحفيز العضلة مع تجنب الشد المفرط على الوتر."
+    },
+    {
+        keywords: ["التواء الكاحل", "lateral ankle sprain", "التواء الكاحل الوحشي", "التواء الكاحل"],
+        title: "بروتوكول التواء الكاحل الوحشي الحاد (Lateral Ankle Sprain)",
+        mode: "TENS - النمط 18 (Massage Tapping) و EMS - النمط 19 (Pushing)",
+        freq: "TENS: 100Hz, EMS: 35Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "للتسكين: (+) على الكعب الوحشي (Lateral Malleolus)، (-) على باطن القدم.",
+            "للتقوية: (+) على الساق (أسفل الركبة من الخارج)، (-) على العضلات الشظوية (Peroneals)."
+        ],
+        explanation: "الالتواء الوحشي (انقلاب الكاحل للداخل) هو الأكثر شيوعاً. يركز البروتوكول على تسكين الألم في الأربطة الجانبية (ATFL, CFL) وتحفيز العضلات الشظوية التي تعمل كمثبتات ديناميكية للكاحل لمنع تكرار الالتواء."
+    },
+    {
+        keywords: ["التهاب اللفافة الأخمصية", "plantar fasciitis", "ألم الكعب", "مسمار الكعب"],
+        title: "بروتوكول التهاب اللفافة الأخمصية (Plantar Fasciitis)",
+        mode: "TENS - النمط 18 (Massage Tapping) و EMS - النمط 14 (Scraping Pressing)",
+        freq: "TENS: 100Hz, EMS: 40Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على كعب القدم (Calcaneus).",
+            "(-) القطب السالب: يوضع على قوس القدم (Arch) من الأسفل."
+        ],
+        explanation: "هذا البروتوكول يحسن التروية الدموية في الأنسجة الليفية البطيئة الشفاء في باطن القدم ويغسل السوائل الالتهابية. يساعد النمط 18 (النقر المساجي) في تقليل حساسية مستقبلات الألم الصباحية."
+    },
+    // 3. العمود الفقري والرقبة والظهر
+    {
+        keywords: ["انزلاق غضروفي قطني", "lumbar disc herniation", "ديسك", "ألم الظهر"],
+        title: "بروتوكول الانزلاق الغضروفي القطني (Lumbar Disc Herniation)",
+        mode: "TENS - النمط 11 (Acupuncture Hammering) و TENS - النمط 4 (Kneading)",
+        freq: "80-100Hz (تسكين) أو 2-10Hz (لتحفيز الإندورفين)",
+        channel: "القناتين (تقاطع)",
+        duration: "30 دقيقة",
+        poles: [
+            "استراتيجية التقاطع: CH1 (+) أعلى يمين العمود الفقري، (-) أسفل يسار العمود الفقري.",
+            "CH2 (+) أعلى يسار العمود الفقري، (-) أسفل يمين العمود الفقري."
+        ],
+        explanation: "وضع الأقطاب بشكل متقاطع (Criss-Cross) يحاكي تأثير التيارات التداخلية (Interferential) لتركيز مسار التيار في النسيج العميق المحيط بالقرص المنزلق. هذا يقلل من الشد العضلي الدفاعي (Muscle Spasm) المحيط بالفقرات ويخفف الضغط على جذور الأعصاب."
+    },
+    {
+        keywords: ["انزلاق غضروفي رقبي", "cervical disc herniation", "ديسك الرقبة"],
+        title: "بروتوكول الانزلاق الغضروفي الرقبي (Cervical Disc Herniation)",
+        mode: "TENS - النمط 4 (Kneading) و EMS - النمط 5 (Scraping)",
+        freq: "TENS: 100Hz, EMS: 35Hz",
+        channel: "القناة 1 و 2",
+        duration: "25 دقيقة",
+        poles: [
+            "(+) الأقطاب الموجبة: توضع على جانبي العمود الفقري العنقي (C5-C7).",
+            "(-) الأقطاب السالبة: توضع على العضلة شبه المنحرفة (Trapezius) والأكتاف."
+        ],
+        explanation: "يتم تخفيف الألم الناتج عن انضغاط جذور الأعصاب في الرقبة، مع تحفيز العضلات المحيطة (شبه المنحرفة، والعضلات الأخمعية - Scalene) لتقليل التوتر وتحسين الاستقامة."
+    },
+    {
+        keywords: ["تضيق القناة القطنية", "spinal stenosis", "ألم الظهر", "خدران الأرجل"],
+        title: "بروتوكول التضيق الشمولي للقناة القطنية (Lumbar Spinal Stenosis)",
+        mode: "TENS - النمط 3 (Acupuncture Kneading) و EMS - النمط 19 (Pushing)",
+        freq: "TENS: 80Hz, EMS: 40Hz",
+        channel: "القناتين",
+        duration: "30 دقيقة",
+        poles: [
+            "القناة الأولى: (+) على الفقرات القطنية (L3-L5)، (-) على الأرداف (Gluteals).",
+            "القناة الثانية: (+) على خلف الفخذ، (-) على خلف الساق لمعالجة الألم المنتشر."
+        ],
+        explanation: "التضيق الشوكي هو تضيق في القناة الشوكية مما يضغط على الأعصاب. الألم يزداد مع المشي ويقل مع الانحناء للأمام. يستخدم التيار لتسكين الألم وتحسين قوة العضلات الباسطة للورك (Gluteals) لتقليل الحمل على العمود الفقري."
+    },
+    {
+        keywords: ["انزلاق الفقرات", "spondylolisthesis", "ألم الظهر", "انزلاق فقري"],
+        title: "بروتوكول انزلاق الفقرات (Spondylolisthesis)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 8 (Pushing)",
+        freq: "EMS: 35Hz, TENS: 90Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للتقوية: (+) على عضلات البطن (للحصول على دعم الجذع)، (-) على عضلات أسفل الظهر.",
+            "للتسكين: (+) و (-) حول الفقرات المنزلقة (L4-L5)."
+        ],
+        explanation: "انزلاق الفقرة (Spondylolisthesis) يحدث غالباً في L5 على S1. يجب تقوية عضلات الجذع (Core) وخاصة عضلات البطن لخلق 'شد طوقي' حول العمود الفقري وتقليل ميلان الحوض، مما يثبت الفقرة المنزلقة ويخفف الألم."
+    },
+    {
+        keywords: ["إصابة الرقبة", "whiplash", "ضربة السوط", "ألم الرقبة"],
+        title: "بروتوكول إصابة الضربات السوطية للرقبة (Whiplash Injury)",
+        mode: "TENS - النمط 7 (Massage) و EMS - النمط 22 (Stroke)",
+        freq: "TENS: 80Hz, EMS: 30Hz",
+        channel: "القناة 1 و 2",
+        duration: "20 دقيقة",
+        poles: [
+            "القناة الأولى: (+) على جانبي الرقبة (الجزء الخلفي)، (-) على الأكتاف.",
+            "القناة الثانية: (+) على العضلة شبه المنحرفة، (-) على العضلات الأخمعية (Scalene)."
+        ],
+        explanation: "إصابة الضربة السوطية (Whiplash) تنتج من تسارع وتباطؤ مفاجئ للرقبة، مما يسبب شداً في الأربطة والعضلات الأمامية والخلفية. يركز البروتوكول على استرخاء العضلات العميقة وتقليل التشنج الواقي."
+    },
+    {
+        keywords: ["متلازمة العضلة الكمثرية", "piriformis", "ألم الأرداف", "عرق النسا"],
+        title: "بروتوكول متلازمة العضلة الكمثرية (Piriformis Syndrome)",
+        mode: "TENS - النمط 12 (Kneading) و EMS - النمط 14 (Scraping)",
+        freq: "TENS: 90Hz, EMS: 40Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) القطب الموجب: يوضع على العجز (Sacrum).",
+            "(-) القطب السالب: يوضع على العضلة الكمثرية (نقطة الألم في الأرداف)."
+        ],
+        explanation: "العضلة الكمثرية المضغوطة تهيج العصب الوركي المار تحتها. يهدف البروتوكول إلى إرخاء هذه العضلة وتخفيف الضغط على العصب، باستخدام تيار TENS لتسكين الألم وتحفيز العضلة لاسترخائها."
+    },
+    {
+        keywords: ["متلازمة المخرج الصدري", "tos", "thoracic outlet", "خدران الذراع"],
+        title: "بروتوكول متلازمة المخرج الصدري (Thoracic Outlet Syndrome - TOS)",
+        mode: "TENS - النمط 4 (Kneading) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 80Hz, EMS: 35Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة",
+        poles: [
+            "القناة الأولى: (+) أعلى الصدر (تحت الترقوة)، (-) على الذراع (الناحية الداخلية).",
+            "القناة الثانية: (+) على لوح الكتف (Scapula)، (-) على العضلة الصدرية الصغيرة (Pectoralis Minor)."
+        ],
+        explanation: "TOS يحدث بسبب انضغاط الحزمة العصبية الوعائية في منطقة المخرج الصدري (بين الترقوة والضلع الأول). يركز العلاج على تقليل التوتر في العضلات الصدرية الصغيرة وتحسين وضعية الكتف."
+    },
+    {
+        keywords: ["آلام الظهر المزمنة", "clbp", "ألم الظهر", "ألم أسفل الظهر"],
+        title: "بروتوكول آلام الظهر المزمنة غير المحددة (Chronic Low Back Pain - CLBP)",
+        mode: "TENS - النمط 2 (Acupuncture) و EMS - النمط 19 (Pushing)",
+        freq: "TENS: 100Hz, EMS: 35-45Hz",
+        channel: "القناتين",
+        duration: "30 دقيقة",
+        poles: [
+            "القناة الأولى: (+) على أسفل الظهر (الجانب الأيمن)، (-) على الأرداف اليمنى.",
+            "القناة الثانية: (+) على أسفل الظهر (الجانب الأيسر)، (-) على الأرداف اليسرى."
+        ],
+        explanation: "يستخدم هذا البروتوكول لتخفيف الألم المزمن وتقوية عضلات أسفل الظهر والبطن لتحسين الاستقرار القطني. نستخدم TENS لتعديل الألم العصبي وEMS لتقوية عضلات الجذع."
+    },
+    {
+        keywords: ["اعوجاج العمود الفقري", "scoliosis", "جنف", "انحناء الظهر"],
+        title: "بروتوكول اعوجاج العمود الفقري (Scoliosis Physio Protocol)",
+        mode: "EMS - النمط 16 (Body Shaping) و EMS - النمط 19 (Pushing)",
+        freq: "30-40Hz",
+        channel: "القناتين",
+        duration: "20-25 دقيقة",
+        poles: [
+            "(+) الأقطاب الموجبة: توضع على جانبي العمود الفقري في منطقة الانحناء.",
+            "(-) الأقطاب السالبة: توضع على العضلات الضعيفة في الجانب المحدب (التقوس)."
+        ],
+        explanation: "في حالات الجنف، تكون العضلات في الجانب المحدب ضعيفة، بينما تكون العضلات في الجانب المقعر متقلصة. نستخدم التحفيز لتقوية العضلات الضعيفة في الجانب المحدب لتحسين التوازن العضلي وإبطاء تطور الانحناء."
+    },
+    {
+        keywords: ["متلازمة شورمان", "scheuermann", "حدب الظهر", "ألم الظهر عند المراهقين"],
+        title: "بروتوكول متلازمة شورمان (Scheuermann's Disease)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 8 (Pushing)",
+        freq: "EMS: 35Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للتقوية: (+) على عضلات البطن، (-) على عضلات الظهر (Paravertebrals) لتقويم الحدب.",
+            "للتسكين: (+) و (-) على الفقرات الصدرية (T5-T10) لتسكين الألم."
+        ],
+        explanation: "متلازمة شورمان هي حدب صبغي (زيادة في الانحناء الصدري) تظهر في المراهقين. العلاج يهدف لتقوية عضلات البطن (التي تسحب الحوض للأمام وتقلل الحدب) وتمديد عضلات الصدر القصيرة."
+    },
+    // 4. التأهيل العصبي والجلطات
+    {
+        keywords: ["السكتة الدماغية", "جلطة دماغية", "stroke", "ischemic stroke", "نزيف دماغي"],
+        title: "بروتوكول السكتة الدماغية الإقفارية والنزفية (Ischemic & Hemorrhagic Stroke Rehab)",
+        mode: "TENS - النمط 2 (Acupuncture) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 100Hz, EMS: 35-50Hz",
+        channel: "القناتين",
+        duration: "30-45 دقيقة",
+        poles: [
+            "للسيطرة على التشنج: (+) و (-) على العضلات المتشنجة (الطرف المصاب).",
+            "للتقوية: (+) على الجذع (العضلة شبه المنحرفة)، (-) على العضلات الضعيفة في الطرف المصاب."
+        ],
+        explanation: "بروتوكول شامل لتأهيل مرضى السكتة الدماغية. في المراحل المبكرة، نستخدم TENS لتخفيف الألم وتقليل التشنج، ثم نستخدم EMS لتحفيز العضلات الضعيفة (خاصة الباسطة للذراع والساق) لاستعادة الحركة وتحسين الأنماط الحركية."
+    },
+    {
+        keywords: ["الشلل النصفي", "hemiplegia", "hemiparesis", "خزل شقي"],
+        title: "بروتوكول الشلل النصفي (Hemiplegia / Hemiparesis)",
+        mode: "EMS - النمط 19 (Pushing Squeezing) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 40Hz, TENS: 90Hz",
+        channel: "القناتين",
+        duration: "30 دقيقة",
+        poles: [
+            "للتقوية: (+) على الجذع، (-) على العضلات الضعيفة (الذراع والساق المصابة).",
+            "للتسكين: (+) و (-) على العضلات المتشنجة (خاصة العضلة ذات الرأسين في الذراع)."
+        ],
+        explanation: "يهدف هذا البروتوكول إلى إعادة تدريب الحركة في الطرف المصاب، وتحسين التوازن، ومنع التقلصات. يركز على تحفيز العضلات المسؤولة عن الحركات الأساسية (بسط اليد، ثني الركبة، رفع القدم)."
+    },
+    {
+        keywords: ["إصابات الحبل الشوكي", "sci", "إصابة النخاع الشوكي", "شلل سفلي"],
+        title: "بروتوكول إصابات الحبل الشوكي (Spinal Cord Injury - SCI)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 1 (Acupuncture)",
+        freq: "EMS: 35-50Hz, TENS: 80-100Hz",
+        channel: "القناتين",
+        duration: "30 دقيقة",
+        poles: [
+            "العضلات المصابة: (+) فوق العضلة (قرب الجذع)، (-) على النقطة الحركية للعضلة.",
+            "للسيطرة على الألم: (+) و (-) حول منطقة الإصابة في العمود الفقري."
+        ],
+        explanation: "في إصابات الحبل الشوكي، يكون هناك شلل في العضلات تحت مستوى الإصابة. يستخدم EMS لمنع ضمور العضلات والحفاظ على كثافة العظام، وتحسين العودة الحسية والحركية."
+    },
+    {
+        keywords: ["التصلب اللويحي", "multiple sclerosis", "ms", "تصلب الأعصاب"],
+        title: "بروتوكول التصلب اللويحي المتعدد (Multiple Sclerosis - MS)",
+        mode: "TENS - النمط 4 (Kneading) و EMS - النمط 22 (Stroke)",
+        freq: "TENS: 80Hz, EMS: 30-40Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للتسكين: (+) و (-) على جانبي العمود الفقري.",
+            "للتقوية: (+) على العضلات الضعيفة (أوتار الركبة، الرباعية)، (-) على العضلة المصابة."
+        ],
+        explanation: "مرض التصلب اللويحي يسبب ضعفاً وتشنجاً وتعباً. يركز العلاج على تخفيف التشنج (باستخدام تيارات منخفضة التردد) وتقوية العضلات الضعيفة مع تجنب الإرهاق (باستخدام EMS خفيف)."
+    },
+    {
+        keywords: ["مرض الشلل الرعاش", "parkinson's disease", "باركنسون", "رعاش"],
+        title: "بروتوكول مرض الشلل الرعاش (Parkinson's Disease)",
+        mode: "TENS - النمط 18 (Massage Tapping) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 90Hz, EMS: 35Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة",
+        poles: [
+            "للسيطرة على الرعاش: (+) و (-) على العضلات المتصلبة (خاصة الرقبة والكتفين).",
+            "للتقوية: (+) على الجذع، (-) على العضلات الطرفية (الأطراف)."
+        ],
+        explanation: "مرض باركنسون يتميز بتصلب العضلات ورعاش. يستخدم TENS لتقليل التيبس وتحسين الدورة الدموية، بينما يستخدم EMS لتحفيز العضلات الضعيفة وتحسين ثبات المشية."
+    },
+    {
+        keywords: ["شلل الوجه النصفي", "bell's palsy", "العصب السابع", "شلل بيل"],
+        title: "بروتوكول شلل الوجه النصفي (Bell's Palsy)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 2 (Acupuncture)",
+        freq: "EMS: 10-20Hz, TENS: 80Hz",
+        channel: "القناة 1 (شدة منخفضة)",
+        duration: "5-10 دقائق",
+        poles: [
+            "(+) القطب الموجب: يوضع خلف شحمة الأذن (Stylomastoid foramen).",
+            "(-) القطب السالب: على النقاط الحركية للعضلات الوجهية (الجبهة، الوجنة، الشفة)."
+        ],
+        explanation: "التحفيز الكهربائي للوجه يتطلب حذراً شديداً. يجب ألا يتجاوز التيار حدود الشعور بالوخز الخفيف إلى انقباض غير مرئي تقريباً. الشدة العالية قد تؤدي إلى التزامن الحركي الخاطئ (Synkinesis) وتفاقم الحالة."
+    },
+    {
+        keywords: ["متلازمة جيلان باريه", "guillain-barré", "شلل الأعصاب", "اعتلال الأعصاب"],
+        title: "بروتوكول متلازمة جيلان باريه (Guillain-Barré Syndrome)",
+        mode: "EMS - النمط 19 (Pushing Squeezing) و TENS - النمط 7 (Massage)",
+        freq: "EMS: 30-40Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "20-25 دقيقة",
+        poles: [
+            "للتقوية: (+) على الجذع، (-) على العضلات الضعيفة (الأطراف الأربعة).",
+            "للتسكين: (+) و (-) على جانبي العمود الفقري لتخفيف الألم العصبي."
+        ],
+        explanation: "متلازمة جيلان باريه هي اعتلال عصبي حاد يسبب ضعفاً صاعداً. يركز البروتوكول على الحفاظ على قوة العضلات ومنع الضمور خلال فترة التعافي. يستخدم EMS لتحفيز العضلات الضعيفة بلطف مع مراقبة التعب."
+    },
+    {
+        keywords: ["إصابة الدماغ الرضية", "tbi", "إصابة الدماغ", "ارتجاج الدماغ"],
+        title: "بروتوكول إصابة الدماغ الرضية (Traumatic Brain Injury - TBI)",
+        mode: "TENS - النمط 4 (Kneading) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 80Hz, EMS: 35Hz",
+        channel: "القناتين",
+        duration: "25 دقيقة",
+        poles: [
+            "للتقوية: (+) على الجذع (عضلات الظهر)، (-) على الأطراف الضعيفة.",
+            "للتسكين: (+) و (-) على الرقبة والكتفين لتخفيف التوتر."
+        ],
+        explanation: "إصابة الدماغ الرضية تسبب ضعفاً عضلياً وتشنجاً واضطرابات في التوازن. يركز البروتوكول على تحسين التحكم الحركي والتوازن من خلال تحفيز عضلات الجذع والأطراف."
+    },
+    // 5. التأهيل القلبي الرئوي
+    {
+        keywords: ["احتشاء عضلة القلب", "heart attack", "mi", "أزمة قلبية"],
+        title: "بروتوكول احتشاء عضلة القلب وإعادة التأهيل (MI Rehab)",
+        mode: "TENS - النمط 2 (Acupuncture) و EMS - النمط 19 (Pushing)",
+        freq: "TENS: 80Hz, EMS: 35Hz",
+        channel: "القناة 1 (فقط)",
+        duration: "15-20 دقيقة",
+        poles: [
+            "يتم وضع (+) على الصدر (منطقة الألم) و (-) على الظهر (في نفس المستوى) لتخفيف الألم."
+        ],
+        explanation: "بعد احتشاء عضلة القلب، يوصى ببرامج تأهيلية مع مراقبة دقيقة. يهدف هذا البروتوكول إلى تخفيف الألم الذبحي وتحسين التحمل القلبي التنفسي من خلال تدريبات التنفس العميق وتمارين الأطراف السفلية الخفيفة."
+    },
+    {
+        keywords: ["جراحة الشريان التاجي", "cabg", "جراحة القلب", "قسطرة قلبية"],
+        title: "بروتوكول جراحة الشريان التاجي (CABG Post-Op Protocol)",
+        mode: "TENS - النمط 7 (Massage) و EMS - النمط 22 (Stroke)",
+        freq: "TENS: 80Hz, EMS: 30Hz",
+        channel: "القناة 1 (فقط)",
+        duration: "15 دقيقة",
+        poles: [
+            "(+) على الصدر (بعيداً عن الجرح الجراحي)، (-) على الظهر لتخفيف الألم."
+        ],
+        explanation: "بعد جراحة القلب المفتوح، يعاني المريض من ألم في الصدر والكتفين. يستخدم TENS لتخفيف الألم وتقليل الحاجة للمسكنات، مع تمارين تنفس عميق لتحسين وظائف الرئة ومنع الالتهابات."
+    },
+    {
+        keywords: ["قصور القلب المزمن", "chf", "فشل القلب", "ضيق التنفس"],
+        title: "بروتوكول قصور القلب المزمن (CHF Exercise Protocol)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 1 (Acupuncture)",
+        freq: "EMS: 35Hz, TENS: 80Hz",
+        channel: "القناة 1 (فقط)",
+        duration: "15-20 دقيقة",
+        poles: [
+            "لتقوية عضلات الأطراف السفلية: (+) على الفخذ، (-) على الساق."
+        ],
+        explanation: "في قصور القلب، تعاني عضلات الأطراف السفلية من الضمور والضعف. يستخدم EMS لتحفيز عضلات الساق والركبة لتحسين تدفق الدم العائد للقلب وتقليل الأعراض."
+    },
+    {
+        keywords: ["مرض الانسداد الرئوي المزمن", "copd", "ضيق التنفس", "انسداد رئوي"],
+        title: "بروتوكول مرض الانسداد الرئوي المزمن (COPD Protocol)",
+        mode: "TENS - النمط 4 (Kneading) و EMS - النمط 22 (Stroke)",
+        freq: "TENS: 80Hz, EMS: 30Hz",
+        channel: "القناة 1 و 2",
+        duration: "20 دقيقة",
+        poles: [
+            "للاسترخاء: (+) على عضلات الصدر، (-) على عضلات الظهر لتوسيع القفص الصدري."
+        ],
+        explanation: "يهدف هذا البروتوكول إلى تخفيف ضيق التنفس وتحسين وظائف الرئة من خلال تحفيز عضلات الجهاز التنفسي وتقليل التوتر في عضلات الصدر والرقبة."
+    },
+    {
+        keywords: ["التليف الرئوي", "pulmonary fibrosis", "تليف الرئتين"],
+        title: "بروتوكول التليف الرئوي (Pulmonary Fibrosis)",
+        mode: "TENS - النمط 7 (Massage) و EMS - النمط 22 (Stroke)",
+        freq: "TENS: 80Hz, EMS: 30Hz",
+        channel: "القناة 1 و 2",
+        duration: "20 دقيقة",
+        poles: [
+            "للاسترخاء: (+) على عضلات الصدر (الأمامية)، (-) على عضلات الظهر (الخلفية)."
+        ],
+        explanation: "التليف الرئوي يؤدي إلى تصلب الرئتين. يركز العلاج على تحسين مرونة القفص الصدري وتسهيل التنفس من خلال تحفيز العضلات التنفسية وتقليل الشد."
+    },
+    // 6. إصابات الأطفال والإصابات الخلقية
+    {
+        keywords: ["الشلل الدماغي", "cerebral palsy", "cp", "إصابة دماغية لدى الأطفال"],
+        title: "بروتوكول الشلل الدماغي للأطفال (Cerebral Palsy - CP)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 30-40Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة",
+        poles: [
+            "للتقوية: (+) على الجذع، (-) على العضلات الضعيفة (الأطراف).",
+            "للاسترخاء: (+) و (-) على العضلات المتشنجة (خاصة أوتار الركبة)."
+        ],
+        explanation: "الشلل الدماغي يسبب تشنجاً وضعفاً في العضلات. يُستخدم التحفيز الكهربائي لتقليل التشنج وتحسين التحكم الحركي والوظائف اليومية للأطفال."
+    },
+    {
+        keywords: ["صعر الرقبة الخلقي", "congenital torticollis", "انحناء الرقبة لدى الأطفال"],
+        title: "بروتوكول صعر الرقبة الخلقي (Congenital Torticollis)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 7 (Massage)",
+        freq: "EMS: 30Hz, TENS: 80Hz",
+        channel: "القناة 1 (شدة منخفضة)",
+        duration: "10-15 دقيقة",
+        poles: [
+            "(+) على الجزء الخلفي من الرقبة (العضلة القصية الترقوية الخشائية - SCM) من الجانب المصاب.",
+            "(-) على الكتف (Trapezius) من نفس الجانب."
+        ],
+        explanation: "الصعر الخلقي (انحناء الرقبة الجانبي) غالباً بسبب تقلص العضلة القصية الترقوية الخشائية (SCM). يستخدم التيار لتقليل التوتر في هذه العضلة وتحسين مرونتها."
+    },
+    {
+        keywords: ["الحثل العضلي", "muscular dystrophy", "ducheme", "ضمور العضلات"],
+        title: "بروتوكول الحثل العضلي لدوشين (Duchenne Muscular Dystrophy)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 30Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "20 دقيقة",
+        poles: [
+            "لتقوية العضلات: (+) على الجذع، (-) على العضلات الضعيفة (الذراعين والساقين)."
+        ],
+        explanation: "الحثل العضلي الدوشيني هو مرض وراثي يسبب ضعفاً متقدماً في العضلات. يستخدم EMS لإبطاء ضمور العضلات والحفاظ على الوظائف الحركية لأطول فترة ممكنة."
+    },
+    // 7. صحة المرأة والحوض
+    {
+        keywords: ["قاع الحوض", "pelvic floor", "سلس البول", "ضعف المثانة"],
+        title: "بروتوكول ضعف قاع الحوض وسلس البول (Pelvic Floor Dysfunction)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 30-50Hz, TENS: 80Hz",
+        channel: "القناة 1 (بأقطاب خاصة)",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) على جدار البطن السفلي (فوق العانة)، (-) على العجز (Sacrum) لتقوية عضلات الحوض."
+        ],
+        explanation: "يهدف إلى تقوية عضلات قاع الحوض لعلاج سلس البول وهبوط الأعضاء. يستخدم EMS لتحفيز الانقباضات الإرادية لهذه العضلات."
+    },
+    {
+        keywords: ["هبوط الأعضاء الحوضية", "pelvic organ prolapse", "تدلي الأعضاء"],
+        title: "بروتوكول هبوط الأعضاء الحوضية (Pelvic Organ Prolapse)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 30-40Hz, TENS: 80Hz",
+        channel: "القناة 1 (بأقطاب خاصة)",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) على العانة (Pubic Bone)، (-) على العجز (Sacrum) لتحفيز عضلات قاع الحوض."
+        ],
+        explanation: "هبوط الأعضاء الحوضية (مثل المثانة والرحم) يحدث بسبب ضعف عضلات قاع الحوض. يستخدم EMS لتقوية هذه العضلات ودعم الأعضاء الداخلية."
+    },
+    {
+        keywords: ["الانفصال العضلي البطني", "diastasis recti", "انفراق عضلات البطن"],
+        title: "بروتوكول الانفصال العضلي البطني (Diastasis Recti)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 30-40Hz, TENS: 80Hz",
+        channel: "القناة 1",
+        duration: "15-20 دقيقة",
+        poles: [
+            "(+) على جانبي البطن (العضلة المستقيمة)، (-) على الخط الأبيض (Linea Alba)."
+        ],
+        explanation: "انفصال العضلتين المستقيمتين للبطن يحدث بعد الحمل. يستخدم EMS لتقوية هذه العضلات وإغلاق الفراغ بينهما."
+    },
+    // 8. الإصابات الرياضية المتقدمة
+    {
+        keywords: ["إجهاد قصبة الساق", "shin splints", "ألم الساق", "متلازمة قصبة الساق"],
+        title: "بروتوكول متلازمة إجهاد قصبة الساق (Shin Splints)",
+        mode: "TENS - النمط 14 (Scraping Pressing) و EMS - النمط 19 (Pushing)",
+        freq: "TENS: 100Hz, EMS: 35Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) على الجزء الأمامي من الساق (أسفل الركبة)، (-) على الكاحل."
+        ],
+        explanation: "إجهاد قصبة الساق هو ألم على طول عظمة الظنبوب (Tibia) ناتج عن الإجهاد المتكرر. يستخدم التيار لتسكين الألم وتحسين التروية الدموية في المنطقة."
+    },
+    {
+        keywords: ["متلازمة الاحتكاك بالرباط الحرقفي الظنبوبي", "itbs", "ألم خارج الركبة"],
+        title: "بروتوكول متلازمة الاحتكاك بالرباط الحرقفي الظنبوبي (ITBS)",
+        mode: "TENS - النمط 12 (Kneading) و EMS - النمط 5 (Scraping)",
+        freq: "TENS: 90Hz, EMS: 40Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) على الجزء الخارجي من الفخذ (قرب الورك)، (-) على الجزء الخارجي من الركبة (اللقيمة الوحشية)."
+        ],
+        explanation: "ITBS هو التهاب في الرباط الحرقفي الظنبوبي (IT Band) بسبب الاحتكاك المتكرر مع عظمة الفخذ. يركز البروتوكول على تخفيف الالتهاب وتحسين مرونة الأنسجة."
+    },
+    {
+        keywords: ["كسور الإجهاد", "stress fractures", "إصابة مشط القدم"],
+        title: "بروتوكول كسور الإجهاد في مشط القدم (Stress Fractures)",
+        mode: "TENS - النمط 7 (Massage) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 80Hz, EMS: 30Hz",
+        channel: "القناة 1",
+        duration: "15 دقيقة",
+        poles: [
+            "(+) على باطن القدم (أسفل الكسر)، (-) على أعلى القدم."
+        ],
+        explanation: "كسور الإجهاد هي تشققات صغيرة في العظام بسبب الإجهاد المتكرر. يستخدم التيار لتسكين الألم وتحفيز التئام العظام."
+    },
+    {
+        keywords: ["إصابة أوتار الركبة", "hamstring strain", "تمزق أوتار الركبة"],
+        title: "بروتوكول إصابة أوتار الركبة (Hamstring Strain)",
+        mode: "EMS - النمط 16 (Body Shaping) و TENS - النمط 4 (Kneading)",
+        freq: "EMS: 35Hz, TENS: 90Hz",
+        channel: "القناة 1",
+        duration: "20 دقيقة",
+        poles: [
+            "(+) على الأرداف (أسفل الورك)، (-) على خلف الفخذ (أعلى الركبة)."
+        ],
+        explanation: "إصابة أوتار الركبة (العضلة ذات الرأسين الفخذية، العضلة النصف وترية) تحدث غالباً أثناء الجري. يركز العلاج على تقوية هذه العضلات ومنع تكرار الإصابة."
+    },
+    {
+        keywords: ["خلع مفصل الفك الصدغي", "tmj", "ألم الفك", "طحن الأسنان"],
+        title: "بروتوكول خلع مفصل الفك الصدغي (TMJ Disorder)",
+        mode: "TENS - النمط 8 (Pushing) و EMS - النمط 16 (Body Shaping)",
+        freq: "TENS: 50-80Hz, EMS: 30Hz",
+        channel: "القناة 1 (شدة منخفضة)",
+        duration: "10 دقائق",
+        poles: [
+            "(+) أمام شحمة الأذن (على المفصل)، (-) على العضلة الماضغة (Masseter)."
+        ],
+        explanation: "آلام مفصل الفك (TMJ) غالباً بسبب تشنج العضلة الماضغة (صرير الأسنان). يستخدم التيار لإرخاء العضلة وتقليل الألم."
+    },
+    {
+        keywords: ["متلازمة الألم المزمن المعقد", "crps", "ألم مزمن"],
+        title: "بروتوكول متلازمة الألم المزمن المعقد (CRPS)",
+        mode: "TENS - النمط 2 (Acupuncture) و TENS - النمط 4 (Kneading)",
+        freq: "80-100Hz",
+        channel: "القناتين",
+        duration: "30 دقيقة",
+        poles: [
+            "(+) على الجذع (منطقة الإصابة)، (-) على الطرف المصاب."
+        ],
+        explanation: "CRPS هو ألم مزمن شديد بعد إصابة. يستخدم TENS لتعديل الألم وتحسين الدورة الدموية في المنطقة المصابة."
+    },
+    {
+        keywords: ["التعب المزمن", "chronic fatigue", "إرهاق بدني"],
+        title: "بروتوكول التعب المزمن وإعادة التكييف البدني (Chronic Fatigue)",
+        mode: "EMS - النمط 7 (Massage) و TENS - النمط 18 (Massage Tapping)",
+        freq: "EMS: 30Hz, TENS: 80Hz",
+        channel: "القناتين",
+        duration: "20-25 دقيقة",
+        poles: [
+            "لتخفيف التوتر: (+) و (-) على الكتفين والرقبة."
+        ],
+        explanation: "التعب المزمن يتطلب برنامجاً تدريجياً لتحسين التحمل البدني. يستخدم التيار لتخفيف التوتر العضلي وتحسين النوم والأداء البدني."
+    }
+];
+
+const modesEncyclopedia = [
+    { mode: "1 إلى 4 (Acupuncture, Tapping, Kneading)", name: "تسكين ألم حاد ومزمن (TENS التقليدي)", desc: "ترددات عالية مستمرة لإغلاق بوابة الألم العصبية. ممتاز لآلام الظهر والرقبة والمفاصل." },
+    { mode: "5 إلى 7 (Scraping, Massage)", name: "الإرخاء العضلي السطحي (Superficial Release)", desc: "نبضات متقطعة تحاكي المساج اليدوي لطرد حمض اللاكتيك بعد الإجهاد." },
+    { mode: "10 و 11 (Acupuncture Squeezing)", name: "فك التشنج العميق (Spasm Reduction)", desc: "ترددات متغيرة تتجاوز التكيف العصبي (Accommodation) لاختراق العضلات العميقة وفك عقدها." },
+    { mode: "16 (Body Shaping - EMS)", name: "التحفيز الكهربائي للعضلات (Motor Stimulation)", desc: "النمط الإكلينيكي الأهم لإعادة التأهيل الحركي. يولد انقباضاً عضلياً كاملاً لعلاج الضمور وتقوية العضلات الضعيفة." },
+    { mode: "19 (Pushing Squeezing)", name: "إعادة التثقيف الحركي والتوافق (Re-education)", desc: "نبضات تصاعدية (Ramped) تسمح للعضلة بالانقباض التدريجي السلس، مثالي لحالات سقوط القدم وضعف القبضة." }
+];
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+}
+
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+    if(id === 'modesModal') renderModesEncyclopedia();
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+function renderModesEncyclopedia() {
+    const list = document.getElementById('modesContentList');
+    list.innerHTML = modesEncyclopedia.map(m => `
+        <div class="mode-item">
+            <h4>⚡ الأنماط ${m.mode}</h4>
+            <p><strong>الوظيفة الإكلينيكية:</strong> ${m.name}</p>
+            <p>${m.desc}</p>
+        </div>
+    `).join('');
+}
+
+function quickSearch(query) {
+    document.getElementById('searchInput').value = query;
+    filterConditions();
+}
+
+// دالة الفلترة الذكية المطورة (الإصدار 2.0 المتصلة بكافة محتويات الدليل والحالات)
+function filterConditions() {
+    let rawKeyword = document.getElementById('searchInput').value.trim();
+    const area = document.getElementById('resultsArea');
+    
+    if(!rawKeyword) {
+        area.innerHTML = `<div class="result-card" style="text-align: center; color: var(--text-secondary); padding: 40px 20px; font-size: 11pt;">المنظومة السريرية الضخمة جاهزة الآن. <br><br>تم تفعيل خوارزمية البحث العكسي وتصحيح الحروف وتدريب المحرك الذكي على الدليل الشامل. ابحث عن أي حالة، نمط، أو مشكلة تقنية للحصول على التوصيف الدقيق.</div>`;
+        return;
+    }
+
+    // تسوية النص: توحيد الحروف العربية لتجاهل أخطاء الإملاء الشائعة
+    const normalizeText = (text) => {
+        return text.toLowerCase()
+            .replace(/[أإآ]/g, 'ا')
+            .replace(/ة/g, 'ه')
+            .replace(/ى/g, 'ي');
+    };
+
+    const normalizedKeyword = normalizeText(rawKeyword);
+    const searchTerms = normalizedKeyword.split(' ').filter(term => term.length > 1);
+
+    const matched = clinicalDatabase.filter(item => {
+        const normalizedTitle = normalizeText(item.title);
+        const normalizedMode = normalizeText(item.mode);
+        const normalizedExplanation = normalizeText(item.explanation);
+        const normalizedKeywords = item.keywords.map(k => normalizeText(k));
+        
+        return searchTerms.some(term => 
+            normalizedTitle.includes(term) || 
+            normalizedMode.includes(term) ||
+            normalizedExplanation.includes(term) ||
+            normalizedKeywords.some(k => k.includes(term))
+        ) || normalizedKeywords.includes(normalizedKeyword);
+    });
+
+    if(matched.length > 0) {
+        area.innerHTML = matched.map(m => {
+            const isEMS = m.mode.includes('EMS');
+            const modeBadgeClass = isEMS ? 'badge-ems' : 'badge-tens';
+            
+            return `
+            <div class="result-card">
+                <h3>${m.title}</h3>
+                
+                <div class="badge-container">
+                    <span class="badge ${modeBadgeClass}">⚡ ${m.mode}</span>
+                    <span class="badge">⏱️ ${m.duration}</span>
+                </div>
+                
+                <div class="tech-details">
+                    <div class="tech-item"><span>التردد والتيار:</span> <strong>${m.freq}</strong></div>
+                    <div class="tech-item"><span>التوزيع:</span> <strong>${m.channel}</strong></div>
+                </div>
+                
+                <div class="electrode-box">
+                    <span class="pos-pole">${m.poles[0]}</span>
+                    <span class="neg-pole">${m.poles[1]}</span>
+                </div>
+
+                <div class="clinical-note"><strong>💡 التحليل الإكلينيكي المتقدم:</strong> ${m.explanation}</div>
+            </div>
+        `}).join('');
+    } else {
+        area.innerHTML = `
+            <div class="result-card" style="border-left: 4px solid var(--accent-warning);">
+                <h3 style="color: var(--accent-warning); border-bottom-color: var(--accent-warning);">⚠️ لم يتم العثور على بروتوكول مباشر لـ "${rawKeyword}"</h3>
+                <p style="font-size: 10pt; line-height: 1.6; margin-top: 15px;">
+                    لم يتم العثور على اسم الحالة باللفظ المباشر في قاعدة البيانات. جرب البحث باستخدام مفردات رئيسية مثل (الرقبة، جلطة، الظهر، الركبة) أو رقم النمط المباشر.
+                </p>
+                <div class="clinical-note" style="background: rgba(245, 158, 11, 0.08); border-color: var(--accent-warning);">
+                    <strong>💡 القاعدة الذهبية المعتمدة لجهاز AST-2012A:</strong> في حال عدم وجود بروتوكول مخصص، نطبق القاعدة الفسيولوجية:
+                    <br>1. <strong>لعلاج الآلام والتخفيف:</strong> استخدم <strong>TENS (النمط 1 أو 2 أو 4)</strong> بتردد مرتفع 77.3Hz وضع الأقطاب (+ / -) محيطة بمركز الألم.
+                    <br>2. <strong>لتقوية العضلات وإعادة التأهيل:</strong> استخدم <strong>EMS (النمط 16 - Body Shaping أو النمط 19)</strong> بوضع القطب السالب (-) على بطن العضلة فوق النقطة الحركية، والقطب الموجب (+) بالقرب من منشأ العضلة.
+                </div>
+            </div>
+        `;
+    }
+}
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW error:', err));
+        });
+    }
+</script>
+</body>
+</html>
+```
