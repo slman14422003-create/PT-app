@@ -1,0 +1,160 @@
+name: Deploy PWA & Release APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-and-release"
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------------
+  # 1) ننشر ملفات الـ PWA على GitHub Pages (لازم يكون ده أول خطوة لأن
+  #    بناء الـ APK بيحتاج يقرأ manifest.json والأيقونات من رابط حقيقي حي)
+  # ---------------------------------------------------------------------
+  deploy-pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ---------------------------------------------------------------------
+  # 2) نبني APK موقّع باستخدام Bubblewrap (Trusted Web Activity) اللي
+  #    بيحوّل الـ PWA المنشور فوق إلى تطبيق أندرويد حقيقي
+  # ---------------------------------------------------------------------
+  build-apk:
+    needs: deploy-pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: تجهيز بيئة الجافا
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: تجهيز Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: تثبيت Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: تحديد رابط الاستضافة (GitHub Pages)
+        id: pages_url
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          LOWER_OWNER=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
+          if [ "$(echo "$REPO" | tr '[:upper:]' '[:lower:]')" = "${LOWER_OWNER}.github.io" ]; then
+            BASE_URL="https://${LOWER_OWNER}.github.io/"
+            START_PATH="/"
+          else
+            BASE_URL="https://${LOWER_OWNER}.github.io/${REPO}/"
+            START_PATH="/${REPO}/"
+          fi
+          HOST="${LOWER_OWNER}.github.io"
+          echo "base_url=$BASE_URL" >> "$GITHUB_OUTPUT"
+          echo "start_path=$START_PATH" >> "$GITHUB_OUTPUT"
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "الموقع المتوقع: $BASE_URL"
+
+      - name: توليد twa-manifest.json من القالب
+        run: |
+          VERSION_CODE=${{ github.run_number }}
+          VERSION_NAME="1.0.${{ github.run_number }}"
+          sed \
+            -e "s#__HOST__#${{ steps.pages_url.outputs.host }}#g" \
+            -e "s#__BASE_URL__#${{ steps.pages_url.outputs.base_url }}#g" \
+            -e "s#__START_URL__#${{ steps.pages_url.outputs.start_path }}#g" \
+            -e "s#__VERSION_NAME__#${VERSION_NAME}#g" \
+            -e "s#__VERSION_CODE__#${VERSION_CODE}#g" \
+            twa-manifest.template.json > twa-manifest.json
+          cat twa-manifest.json
+
+      - name: انتظار جاهزية الموقع المنشور
+        run: |
+          URL="${{ steps.pages_url.outputs.base_url }}manifest.json"
+          echo "التحقق من: $URL"
+          for i in $(seq 1 15); do
+            if curl -sSf "$URL" > /dev/null; then
+              echo "الموقع جاهز."
+              exit 0
+            fi
+            echo "محاولة $i: لسه مش جاهز، بننتظر 10 ثواني..."
+            sleep 10
+          done
+          echo "::error::تعذر الوصول لموقع GitHub Pages بعد عدة محاولات."
+          exit 1
+
+      - name: تجهيز مفتاح التوقيع
+        id: signing
+        run: |
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "تم العثور على مفتاح توقيع ثابت في Secrets - سيُستخدم (يسمح بتحديث نفس التطبيق بدون إزالة النسخة القديمة)."
+            echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android.keystore
+            echo "storepass=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> "$GITHUB_OUTPUT"
+            echo "keypass=${{ secrets.ANDROID_KEY_PASSWORD }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "لا يوجد مفتاح توقيع محفوظ - سيتم توليد مفتاح مؤقت تلقائيًا لهذا الإصدار."
+            echo "(ملاحظة: هذا يعني إن تثبيت هذا الإصدار فوق إصدار سابق سيتطلب إزالة القديم أولاً،"
+            echo "لأن مفتاح التوقيع يختلف في كل مرة. لتفادي ذلك مستقبلاً، راجع README-APK.md.)"
+            keytool -genkeypair -v -keystore android.keystore -alias androidkey \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "auto-generated-build" -keypass "auto-generated-build" \
+              -dname "CN=AST-2012A, OU=Auto, O=Auto, L=NA, S=NA, C=US"
+            echo "storepass=auto-generated-build" >> "$GITHUB_OUTPUT"
+            echo "keypass=auto-generated-build" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: بناء التطبيق (APK)
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ steps.signing.outputs.storepass }}
+          ANDROID_KEY_PASSWORD: ${{ steps.signing.outputs.keypass }}
+        run: |
+          bubblewrap build --skipPwaValidation \
+            --password="$ANDROID_KEYSTORE_PASSWORD" \
+            --keyPassword="$ANDROID_KEY_PASSWORD"
+          ls -la
+
+      - name: تجهيز ملف الإصدار النهائي
+        run: |
+          mkdir -p dist
+          if [ -f app-release-signed.apk ]; then
+            cp app-release-signed.apk "dist/AST-2012A-v1.0.${{ github.run_number }}.apk"
+          else
+            echo "::error::لم يتم العثور على ملف APK الناتج."
+            find . -maxdepth 2 -iname "*.apk"
+            exit 1
+          fi
+
+      - name: إنشاء إصدار (Release) تلقائي على GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: AST-2012A v1.0.${{ github.run_number }}
+          body: |
+            تحديث تلقائي مبني من آخر كود على main.
+            نزّل ملف الـ APK تحت وثبّته على جهاز أندرويد (فعّل "السماح بمصادر غير معروفة" عند التثبيت أول مرة).
+
+            ⚠️ إذا كان عندك إصدار سابق مثبّت ولم يتم إعداد مفتاح توقيع ثابت (راجع README-APK.md)،
+            قد تحتاج لإزالة النسخة القديمة أولاً قبل تثبيت هذا الإصدار.
+          files: dist/*.apk
+          make_latest: true
