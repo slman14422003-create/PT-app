@@ -1,0 +1,297 @@
+name: Deploy PWA & Release APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-and-release"
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------------
+  # 0) نحسب فقط بصمة SHA256 الحقيقية لمفتاح التوقيع اللي هيتم استخدامه
+  #    لاحقًا، عشان نكتبها في assetlinks.json قبل النشر فيتطابق الاثنين
+  #    دايمًا (وده اللي بيمنع ظهور التطبيق كتبويب متصفح Chrome).
+  #
+  #    ملاحظة أمان مهمة: هذا الجوب لا يرفع ملف الـ keystore الحقيقي (لو
+  #    كان مفتاح ثابت من Secrets) كـ artifact أبدًا - فقط يحسب بصمته ثم
+  #    يحذفه فورًا. كذلك كلمات المرور لا تُمرَّر كمخرجات (outputs) بين
+  #    الجوبات إطلاقًا، لأن GitHub Actions يستبدل أي قيمة تم إخفاؤها
+  #    (masked) بسلسلة فارغة عند قراءتها من جوب تاني - وهذا بالظبط ما كان
+  #    يسبب خطأ "apksigner ... pass:''" اللي ظهرلك.
+  # ---------------------------------------------------------------------
+  prepare-signing:
+    runs-on: ubuntu-latest
+    outputs:
+      fingerprint: ${{ steps.signing.outputs.fingerprint }}
+      using_secret_key: ${{ steps.signing.outputs.using_secret_key }}
+    steps:
+      - name: تجهيز بيئة الجافا
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: حساب بصمة SHA256 فقط (بدون تمرير أي كلمة مرور لجوبات تانية)
+        id: signing
+        run: |
+          ALIAS="androidkey"
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "using_secret_key=true" >> "$GITHUB_OUTPUT"
+            echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > temp.keystore
+            STOREPASS="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+            ALIAS_INPUT="${{ secrets.ANDROID_KEY_ALIAS }}"
+            if [ -n "$ALIAS_INPUT" ]; then ALIAS="$ALIAS_INPUT"; fi
+          else
+            echo "using_secret_key=false" >> "$GITHUB_OUTPUT"
+            # كلمة مرور المفتاح المؤقت ثابتة ومعروفة عمدًا (مش سر حقيقي)
+            # حتى تقدر build-apk تعيد توليد نفس الملف بنفس البيانات لاحقًا.
+            STOREPASS="auto-generated-build"
+            keytool -genkeypair -v -keystore temp.keystore -alias "$ALIAS" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$STOREPASS" -keypass "$STOREPASS" \
+              -dname "CN=AST-2012A, OU=Auto, O=Auto, L=NA, S=NA, C=US"
+          fi
+
+          FINGERPRINT=$(keytool -list -v -keystore temp.keystore -alias "$ALIAS" -storepass "$STOREPASS" \
+            | grep "SHA256:" | sed 's/.*SHA256: //')
+          echo "بصمة SHA256 الفعلية لهذا التشغيل: $FINGERPRINT"
+          echo "fingerprint=$FINGERPRINT" >> "$GITHUB_OUTPUT"
+
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            # مفتاح حقيقي وثابت من Secrets - لا يُرفع كـ artifact أبدًا، نحذفه فورًا
+            # (سيُعاد فك تشفيره مباشرة من Secrets داخل جوب البناء).
+            rm -f temp.keystore
+          else
+            # مفتاح مؤقت غير حقيقي (يتغيّر في كل تشغيل، كلمة مروره ثابتة ومعروفة
+            # عمدًا وليست سرًا). يجب استخدام نفس الملف بالضبط في جوب البناء
+            # (وليس توليد مفتاح مختلف) حتى تتطابق بصمته مع assetlinks.json.
+            mv temp.keystore android.keystore
+          fi
+
+      - name: رفع المفتاح المؤقت فقط (في حال عدم وجود مفتاح ثابت في Secrets)
+        if: steps.signing.outputs.using_secret_key == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-keystore-temp
+          path: android.keystore
+          retention-days: 1
+
+  # ---------------------------------------------------------------------
+  # 1) ننشر ملفات الـ PWA على GitHub Pages بعد كتابة بصمة مفتاح التوقيع
+  #    الحقيقية داخل .well-known/assetlinks.json.
+  # ---------------------------------------------------------------------
+  deploy-pages:
+    needs: prepare-signing
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: كتابة بصمة SHA256 الحقيقية في assetlinks.json
+        run: |
+          mkdir -p .well-known
+          cat > .well-known/assetlinks.json << EOF
+          [
+            {
+              "relation": ["delegate_permission/common.handle_all_urls"],
+              "target": {
+                "namespace": "android_app",
+                "package_name": "com.ast2012a.clinicalmaster",
+                "sha256_cert_fingerprints": ["${{ needs.prepare-signing.outputs.fingerprint }}"]
+              }
+            }
+          ]
+          EOF
+          cat .well-known/assetlinks.json
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ---------------------------------------------------------------------
+  # 2) نبني APK موقّع. مفتاح التوقيع وكلمة مروره يتم تجهيزهم من جديد هنا
+  #    مباشرة (وليس عبر outputs جاية من جوب تاني) لتفادي مشكلة الإخفاء
+  #    (masking) اللي بتفضّي القيمة. بالنسبة لحالة "مفتاح ثابت من
+  #    Secrets" فهذا يعيد استخدام نفس المفتاح والسر الحقيقيين (فيتطابق
+  #    مع البصمة المنشورة في assetlinks.json). بالنسبة لحالة "بدون
+  #    Secrets" فهذا يعيد توليد نفس المفتاح المؤقت بنفس البيانات
+  #    والبذرة الثابتة (dname + password) المستخدمة فوق - لكن هذا لا
+  #    يعطي نفس البصمة بالضبط لأن RSA keygen عشوائي، فبدل كده بنحمّله
+  #    كـ artifact من الجوب الأول (الملف المؤقت غير حساس أصلاً لأنه
+  #    بيتغيّر في كل تشغيل وكلمة مروره ثابتة ومعروفة عمدًا).
+  # ---------------------------------------------------------------------
+  build-apk:
+    needs: [ prepare-signing, deploy-pages ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: تجهيز بيئة الجافا
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: تحميل المفتاح المؤقت (فقط في حال عدم وجود مفتاح ثابت في Secrets)
+        if: needs.prepare-signing.outputs.using_secret_key == 'false'
+        uses: actions/download-artifact@v4
+        with:
+          name: android-keystore-temp
+          path: .
+
+      - name: تجهيز مفتاح التوقيع (نفس المفتاح المستخدم بالضبط لحساب البصمة)
+        env:
+          KS_PASS_SECRET: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASS_SECRET: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS_SECRET: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          if [ "${{ needs.prepare-signing.outputs.using_secret_key }}" = "true" ]; then
+            echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android.keystore
+            ALIAS="$KEY_ALIAS_SECRET"; [ -z "$ALIAS" ] && ALIAS="androidkey"
+            {
+              echo "BUBBLEWRAP_KEYSTORE_PASSWORD=$KS_PASS_SECRET"
+              echo "BUBBLEWRAP_KEY_PASSWORD=$KEY_PASS_SECRET"
+              echo "KEY_ALIAS=$ALIAS"
+            } >> "$GITHUB_ENV"
+          else
+            # نفس الملف المؤقت بالضبط اللي حسبنا بصمته سابقًا (تم تحميله بالخطوة اللي فوق)
+            ALIAS="androidkey"
+            {
+              echo "BUBBLEWRAP_KEYSTORE_PASSWORD=auto-generated-build"
+              echo "BUBBLEWRAP_KEY_PASSWORD=auto-generated-build"
+              echo "KEY_ALIAS=$ALIAS"
+            } >> "$GITHUB_ENV"
+            FP_CHECK=$(keytool -list -v -keystore android.keystore -alias "$ALIAS" -storepass "auto-generated-build" | grep "SHA256:" | sed 's/.*SHA256: //')
+            echo "بصمة المفتاح المستخدم فعليًا الآن: $FP_CHECK"
+            echo "بصمة assetlinks.json المنشورة: ${{ needs.prepare-signing.outputs.fingerprint }}"
+            if [ "$FP_CHECK" != "${{ needs.prepare-signing.outputs.fingerprint }}" ]; then
+              echo "::error::بصمتا المفتاح لا تتطابقان - هذا لا يجب أن يحدث. راجع خطوة تحميل الـ artifact."
+              exit 1
+            fi
+          fi
+
+      - name: تجهيز Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: تثبيت حزم Android SDK المطلوبة لبناء التطبيق
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+      - name: تجهيز Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: تثبيت Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: إعداد Bubblewrap مسبقًا (JDK + Android SDK) لتفادي أي سؤال تفاعلي
+        run: |
+          mkdir -p "$HOME/.bubblewrap"
+          cat > "$HOME/.bubblewrap/config.json" << EOF
+          {
+            "jdkPath": "${JAVA_HOME}",
+            "androidSdkPath": "${ANDROID_HOME}"
+          }
+          EOF
+          cat "$HOME/.bubblewrap/config.json"
+
+      - name: تحديد رابط الاستضافة (GitHub Pages)
+        id: pages_url
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          LOWER_OWNER=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
+          if [ "$(echo "$REPO" | tr '[:upper:]' '[:lower:]')" = "${LOWER_OWNER}.github.io" ]; then
+            BASE_URL="https://${LOWER_OWNER}.github.io/"
+            START_PATH="/"
+          else
+            BASE_URL="https://${LOWER_OWNER}.github.io/${REPO}/"
+            START_PATH="/${REPO}/"
+          fi
+          HOST="${LOWER_OWNER}.github.io"
+          echo "base_url=$BASE_URL" >> "$GITHUB_OUTPUT"
+          echo "start_path=$START_PATH" >> "$GITHUB_OUTPUT"
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "الموقع المتوقع: $BASE_URL"
+
+      - name: توليد twa-manifest.json من القالب
+        run: |
+          VERSION_CODE=${{ github.run_number }}
+          VERSION_NAME="1.0.${{ github.run_number }}"
+          sed \
+            -e "s#__HOST__#${{ steps.pages_url.outputs.host }}#g" \
+            -e "s#__BASE_URL__#${{ steps.pages_url.outputs.base_url }}#g" \
+            -e "s#__START_URL__#${{ steps.pages_url.outputs.start_path }}#g" \
+            -e "s#__VERSION_NAME__#${VERSION_NAME}#g" \
+            -e "s#__VERSION_CODE__#${VERSION_CODE}#g" \
+            twa-manifest.template.json > twa-manifest.json
+          # نستخدم نفس اسم الـ alias اللي جهزناه فوق (androidkey افتراضيًا أو المخصص من الأسرار)
+          sed -i "s#\"alias\": \"androidkey\"#\"alias\": \"${KEY_ALIAS}\"#" twa-manifest.json
+          cat twa-manifest.json
+
+      - name: انتظار جاهزية الموقع المنشور
+        run: |
+          URL="${{ steps.pages_url.outputs.base_url }}manifest.json"
+          echo "التحقق من: $URL"
+          for i in $(seq 1 15); do
+            if curl -sSf "$URL" > /dev/null; then
+              echo "الموقع جاهز."
+              break
+            fi
+            echo "محاولة $i: لسه مش جاهز، بننتظر 10 ثواني..."
+            sleep 10
+            if [ "$i" = "15" ]; then
+              echo "::error::تعذر الوصول لموقع GitHub Pages بعد عدة محاولات."
+              exit 1
+            fi
+          done
+
+      - name: توليد مشروع الأندرويد مسبقًا (عشان رسالة الـ checksum متظهرش خالص)
+        run: bubblewrap update --skipVersionUpgrade
+
+      - name: بناء التطبيق (APK)
+        run: |
+          bubblewrap build --skipPwaValidation
+          ls -la
+
+      - name: تجهيز ملف الإصدار النهائي
+        run: |
+          mkdir -p dist
+          if [ -f app-release-signed.apk ]; then
+            cp app-release-signed.apk "dist/AST-2012A-v1.0.${{ github.run_number }}.apk"
+          else
+            echo "::error::لم يتم العثور على ملف APK الناتج."
+            find . -maxdepth 2 -iname "*.apk"
+            exit 1
+          fi
+
+      - name: إنشاء إصدار (Release) تلقائي على GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: AST-2012A v1.0.${{ github.run_number }}
+          body: |
+            تحديث تلقائي مبني من آخر كود على main.
+            نزّل ملف الـ APK تحت وثبّته على جهاز أندرويد (فعّل "السماح بمصادر غير معروفة" عند التثبيت أول مرة).
+
+            بصمة مفتاح التوقيع المستخدم في هذا الإصدار: `${{ needs.prepare-signing.outputs.fingerprint }}`
+
+            ⚠️ إذا كان عندك إصدار سابق مثبّت ولم يتم إعداد مفتاح توقيع ثابت (راجع README-APK.md)،
+            قد تحتاج لإزالة النسخة القديمة أولاً قبل تثبيت هذا الإصدار.
+          files: dist/*.apk
+          make_latest: true
