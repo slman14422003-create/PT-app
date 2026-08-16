@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غير متصل - AST-2012A</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tajawal, Arial, sans-serif;
+            background: #0b0f19;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .offline-container {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px 30px;
+            background: rgba(30, 41, 59, 0.85);
+            border-radius: 24px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        h1 {
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        p {
+            color: #94a3b8;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #38bdf8;
+            color: #0b0f19;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <span class="icon">📡</span>
+        <h1>غير متصل بالإنترنت</h1>
+        <p>
+            يبدو أنك غير متصل بالشبكة. 
+            <br>
+            لا تقلق، التطبيق يعمل في وضع عدم الاتصال!
+        </p>
+        <button class="btn" onclick="location.reload()">🔄 إعادة المحاولة</button>
+        <div class="status">
+            ✅ جميع البروتوكولات مخزنة محلياً
+        </div>
+        <div style="margin-top: 15px; font-size: 12px; color: #64748b;">
+            AST-2012A Clinical Master Pro v2.0
+        </div>
+    </div>
+    <script>
+        // محاولة الاتصال بالشبكة كل 30 ثانية
+        setInterval(() => {
+            if (navigator.onLine) {
+                location.reload();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
