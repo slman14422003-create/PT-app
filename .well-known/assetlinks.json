@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ast2012a.clinicalmaster",
+      "sha256_cert_fingerprints": [
+        "43:35:26:E9:9F:BC:B1:45:7E:7D:33:81:8F:C2:81:5A:59:08:BB:AD:7E:66:AB:B3:87:12:C3:0D:26:30:5B:48"
+      ]
+    }
+  }
+]
